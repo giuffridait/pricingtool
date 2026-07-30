@@ -1,0 +1,18 @@
+[
+  {
+    "id": "exp_hoodie_price_test",
+    "name": "Hoodie price test",
+    "hypothesis": "A slightly lower price increases hoodie conversion enough to grow revenue",
+    "skuId": "sku_hoodie_black_m",
+    "businessUnitId": "bu_apparel",
+    "market": "DE",
+    "controlPrice": 34.9,
+    "controlTrafficPercent": 90,
+    "challengerPrice": 32.9,
+    "challengerTrafficPercent": 10,
+    "startDate": "2026-08-01",
+    "endDate": "2026-08-29",
+    "status": "draft",
+    "marginFloor": 20
+  }
+]

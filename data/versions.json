@@ -1,0 +1,14 @@
+[
+  {
+    "id": "v_seed",
+    "entityType": "seed",
+    "entityId": "seed",
+    "status": "active",
+    "payload": {
+      "note": "initial seed data"
+    },
+    "createdAt": "2026-07-30T15:10:05.737Z",
+    "createdBy": "seed-script",
+    "activatedAt": "2026-07-30T15:10:05.737Z"
+  }
+]

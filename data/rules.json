@@ -1,0 +1,130 @@
+[
+  {
+    "id": "rule_premium_eu_base",
+    "name": "Premium Tee base EU",
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "setPrice",
+      "price": 25
+    },
+    "priority": 10,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_premium_de_sale",
+    "name": "Premium Tee DE sale",
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "dimensions": {
+      "market": "DE"
+    },
+    "effect": {
+      "type": "setPrice",
+      "price": 22
+    },
+    "priority": 100,
+    "validFrom": "2026-06-01",
+    "validTo": "2026-06-15",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_loyalty_gold",
+    "name": "Loyalty Gold -5%",
+    "scope": {},
+    "dimensions": {
+      "customerGroup": "loyalty-gold"
+    },
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_loyalty_gold"
+    },
+    "priority": 90,
+    "stackingGroup": "loyalty",
+    "exclusionGroups": [
+      "seasonal"
+    ],
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_hoodie_seasonal_sale",
+    "name": "Hoodie Summer Sale",
+    "scope": {
+      "productGroupId": "pg_hoodies"
+    },
+    "dimensions": {
+      "market": "DE"
+    },
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_summer_sale"
+    },
+    "priority": 50,
+    "stackingGroup": "seasonal",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_tee_volume",
+    "name": "Tee volume tiers",
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_volume_tee"
+    },
+    "priority": 10,
+    "stackingGroup": "volume",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_tee_bogo",
+    "name": "Tee BOGO",
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_bogo_tee"
+    },
+    "priority": 20,
+    "stackingGroup": "multibuy",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_core_tee_volume",
+    "name": "Core tee volume tiers",
+    "scope": {
+      "productId": "prod_core_tee"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_volume_core_tee"
+    },
+    "priority": 10,
+    "stackingGroup": "volume",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_hoodie_mobile_glitch",
+    "name": "Hoodie mobile channel price",
+    "scope": {
+      "productId": "prod_hoodie"
+    },
+    "dimensions": {
+      "channel": "mobile"
+    },
+    "effect": {
+      "type": "setPrice",
+      "price": 32
+    },
+    "priority": 5,
+    "versionId": "v_seed"
+  }
+]

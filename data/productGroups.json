@@ -1,0 +1,14 @@
+[
+  {
+    "id": "pg_tshirts",
+    "level": "productGroup",
+    "name": "T-Shirts",
+    "businessUnitId": "bu_apparel"
+  },
+  {
+    "id": "pg_hoodies",
+    "level": "productGroup",
+    "name": "Hoodies",
+    "businessUnitId": "bu_apparel"
+  }
+]

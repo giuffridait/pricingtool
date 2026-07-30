@@ -1,0 +1,86 @@
+[
+  {
+    "id": "sanity-size-order-sku_hoodie_black_xl",
+    "type": "sanityCheck",
+    "severity": "critical",
+    "message": "Classic Hoodie black: XL (24.00) is cheaper than L (30.00).",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-sale-above-rrp-rule_premium_eu_base",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "Rule \"Premium Tee base EU\" sets price 25.00, above the catalog base price 22.00 it overrides.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-sale-above-rrp-rule_hoodie_mobile_glitch",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "Rule \"Hoodie mobile channel price\" sets price 32.00, above the catalog base price 30.00 it overrides.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-overlapping-tiers-disc_volume_core_tee",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "Discount \"Core tee volume discount\" has overlapping tiers: more than one tier starts at qty 10.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-missing-market-price-shop_ch-pg_tshirts",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "T-Shirts has no CHF price for Swiss Store - falls back to EUR default.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-missing-market-price-shop_ch-pg_hoodies",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "Hoodies has no CHF price for Swiss Store - falls back to EUR default.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-missing-market-price-shop_uk-pg_tshirts",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "T-Shirts has no GBP price for UK Store - falls back to EUR default.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "sanity-missing-market-price-shop_uk-pg_hoodies",
+    "type": "sanityCheck",
+    "severity": "warning",
+    "message": "Hoodies has no GBP price for UK Store - falls back to EUR default.",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "margin-floor-sku_core_tee_white_m-bu_apparel",
+    "type": "marginFloorRisk",
+    "severity": "warning",
+    "message": "Core Tee white / M: price 16.00 is only 6.3% above its floor 15.00.",
+    "relatedEntityType": "sku",
+    "relatedEntityId": "sku_core_tee_white_m",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  },
+  {
+    "id": "expiring-discount-disc_summer_sale",
+    "type": "expiringDiscount",
+    "severity": "warning",
+    "message": "Discount \"Summer Sale\" expires in 1 day(s) (2026-07-31).",
+    "relatedEntityType": "discount",
+    "relatedEntityId": "disc_summer_sale",
+    "createdAt": "2026-07-30T15:10:20.143Z",
+    "acknowledged": false
+  }
+]

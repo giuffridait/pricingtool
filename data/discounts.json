@@ -1,0 +1,106 @@
+[
+  {
+    "id": "disc_summer_sale",
+    "name": "Summer Sale",
+    "type": "percentOff",
+    "value": 15,
+    "scope": {
+      "productGroupId": "pg_hoodies"
+    },
+    "eligibility": {
+      "markets": [
+        "DE",
+        "FR"
+      ]
+    },
+    "validFrom": "2026-07-01",
+    "validTo": "2026-07-31",
+    "stackingGroup": "seasonal",
+    "priority": 50,
+    "badge": "SALE",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_volume_tee",
+    "name": "Tee volume discount",
+    "type": "volumeTier",
+    "tiers": [
+      {
+        "minQty": 1
+      },
+      {
+        "minQty": 10,
+        "discountPercent": 5
+      },
+      {
+        "minQty": 50,
+        "discountPercent": 10
+      }
+    ],
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "eligibility": {},
+    "stackingGroup": "volume",
+    "priority": 10,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_bogo_tee",
+    "name": "Buy 3 tees, pay for 2",
+    "type": "bogo",
+    "bogo": {
+      "buyQty": 3,
+      "payQty": 2,
+      "cheapestFree": true
+    },
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "eligibility": {},
+    "stackingGroup": "multibuy",
+    "priority": 20,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_loyalty_gold",
+    "name": "Loyalty Gold",
+    "type": "percentOff",
+    "value": 5,
+    "scope": {},
+    "eligibility": {
+      "customerGroups": [
+        "loyalty-gold"
+      ]
+    },
+    "stackingGroup": "loyalty",
+    "priority": 90,
+    "badge": "LOYALTY",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_volume_core_tee",
+    "name": "Core tee volume discount",
+    "type": "volumeTier",
+    "tiers": [
+      {
+        "minQty": 1
+      },
+      {
+        "minQty": 10,
+        "discountPercent": 5
+      },
+      {
+        "minQty": 10,
+        "discountPercent": 8
+      }
+    ],
+    "scope": {
+      "productId": "prod_core_tee"
+    },
+    "eligibility": {},
+    "stackingGroup": "volume",
+    "priority": 10,
+    "versionId": "v_seed"
+  }
+]

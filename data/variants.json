@@ -1,0 +1,30 @@
+[
+  {
+    "id": "var_premium_tee_red",
+    "level": "variant",
+    "name": "Premium Tee red",
+    "productId": "prod_premium_tee",
+    "appearance": "red"
+  },
+  {
+    "id": "var_premium_tee_black",
+    "level": "variant",
+    "name": "Premium Tee black",
+    "productId": "prod_premium_tee",
+    "appearance": "black"
+  },
+  {
+    "id": "var_core_tee_white",
+    "level": "variant",
+    "name": "Core Tee white",
+    "productId": "prod_core_tee",
+    "appearance": "white"
+  },
+  {
+    "id": "var_hoodie_black",
+    "level": "variant",
+    "name": "Classic Hoodie black",
+    "productId": "prod_hoodie",
+    "appearance": "black"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sku_premium_tee_red_m",
+    "level": "sku",
+    "name": "red / M",
+    "variantId": "var_premium_tee_red",
+    "size": "M",
+    "costBasis": 10
+  },
+  {
+    "id": "sku_premium_tee_red_xxl",
+    "level": "sku",
+    "name": "red / XXL",
+    "variantId": "var_premium_tee_red",
+    "size": "XXL",
+    "costBasis": 11
+  },
+  {
+    "id": "sku_premium_tee_black_m",
+    "level": "sku",
+    "name": "black / M",
+    "variantId": "var_premium_tee_black",
+    "size": "M",
+    "costBasis": 10
+  },
+  {
+    "id": "sku_core_tee_white_m",
+    "level": "sku",
+    "name": "white / M",
+    "variantId": "var_core_tee_white",
+    "size": "M",
+    "costBasis": 8
+  },
+  {
+    "id": "sku_hoodie_black_m",
+    "level": "sku",
+    "name": "black / M",
+    "variantId": "var_hoodie_black",
+    "size": "M",
+    "costBasis": 15
+  },
+  {
+    "id": "sku_hoodie_black_l",
+    "level": "sku",
+    "name": "black / L",
+    "variantId": "var_hoodie_black",
+    "size": "L",
+    "costBasis": 15
+  },
+  {
+    "id": "sku_hoodie_black_xl",
+    "level": "sku",
+    "name": "black / XL",
+    "variantId": "var_hoodie_black",
+    "size": "XL",
+    "costBasis": 15.5
+  }
+]

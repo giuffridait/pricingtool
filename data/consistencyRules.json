@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cr_premium_gap",
+    "name": "Premium tee ≥ core tee +10%",
+    "type": "minGapPercent",
+    "subjectRefId": "prod_premium_tee",
+    "comparatorRefId": "prod_core_tee",
+    "threshold": 10,
+    "severity": "blocking"
+  },
+  {
+    "id": "cr_ch_parity",
+    "name": "CH price within ±15% of EU",
+    "type": "parityDeviation",
+    "subjectRefId": "pg_tshirts",
+    "comparatorRefId": "EU",
+    "threshold": 15,
+    "severity": "warning"
+  }
+]

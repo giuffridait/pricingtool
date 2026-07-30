@@ -1,0 +1,23 @@
+[
+  {
+    "id": "prod_premium_tee",
+    "level": "product",
+    "name": "Premium Tee",
+    "productGroupId": "pg_tshirts",
+    "productType": "tee"
+  },
+  {
+    "id": "prod_core_tee",
+    "level": "product",
+    "name": "Core Tee",
+    "productGroupId": "pg_tshirts",
+    "productType": "tee"
+  },
+  {
+    "id": "prod_hoodie",
+    "level": "product",
+    "name": "Classic Hoodie",
+    "productGroupId": "pg_hoodies",
+    "productType": "hoodie"
+  }
+]

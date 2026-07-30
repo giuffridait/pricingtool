@@ -1,0 +1,34 @@
+[
+  {
+    "id": "shop_de",
+    "name": "Germany Store",
+    "businessUnitId": "bu_apparel",
+    "market": "DE",
+    "channel": "web",
+    "currency": "EUR"
+  },
+  {
+    "id": "shop_ch",
+    "name": "Swiss Store",
+    "businessUnitId": "bu_apparel",
+    "market": "CH",
+    "channel": "web",
+    "currency": "CHF"
+  },
+  {
+    "id": "shop_uk",
+    "name": "UK Store",
+    "businessUnitId": "bu_apparel",
+    "market": "UK",
+    "channel": "web",
+    "currency": "GBP"
+  },
+  {
+    "id": "shop_mobile_de",
+    "name": "Mobile App (DE)",
+    "businessUnitId": "bu_apparel",
+    "market": "DE",
+    "channel": "mobile",
+    "currency": "EUR"
+  }
+]

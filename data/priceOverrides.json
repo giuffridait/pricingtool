@@ -1,0 +1,77 @@
+[
+  {
+    "id": "po_pg_tshirts",
+    "level": "productGroup",
+    "refId": "pg_tshirts",
+    "businessUnitId": "bu_apparel",
+    "price": 20,
+    "currency": "EUR",
+    "floor": 15,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_pg_hoodies",
+    "level": "productGroup",
+    "refId": "pg_hoodies",
+    "businessUnitId": "bu_apparel",
+    "price": 30,
+    "currency": "EUR",
+    "floor": 20,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_prod_core_tee",
+    "level": "product",
+    "refId": "prod_core_tee",
+    "businessUnitId": "bu_apparel",
+    "price": 20,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_var_premium_tee_red",
+    "level": "variant",
+    "refId": "var_premium_tee_red",
+    "businessUnitId": "bu_apparel",
+    "price": 22,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_sku_premium_tee_red_xxl",
+    "level": "sku",
+    "refId": "sku_premium_tee_red_xxl",
+    "businessUnitId": "bu_apparel",
+    "price": 24,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_prod_premium_tee_shop_de",
+    "level": "product",
+    "refId": "prod_premium_tee",
+    "businessUnitId": "bu_apparel",
+    "shopId": "shop_de",
+    "price": 21,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_sku_hoodie_black_xl",
+    "level": "sku",
+    "refId": "sku_hoodie_black_xl",
+    "businessUnitId": "bu_apparel",
+    "price": 24,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_sku_core_tee_white_m",
+    "level": "sku",
+    "refId": "sku_core_tee_white_m",
+    "businessUnitId": "bu_apparel",
+    "price": 16,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  }
+]

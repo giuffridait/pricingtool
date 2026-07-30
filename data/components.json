@@ -1,0 +1,51 @@
+[
+  {
+    "id": "comp_print",
+    "type": "printTechnique",
+    "name": "Print (default)",
+    "calcModel": "flat",
+    "value": 4.5,
+    "matches": {
+      "printArea": "back",
+      "printTechnique": "flex"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_print_embroidery",
+    "type": "printTechnique",
+    "name": "Back print, embroidery",
+    "parentId": "comp_print",
+    "calcModel": "perStitch",
+    "value": 0.02,
+    "stitchCount": 400,
+    "matches": {
+      "printArea": "back",
+      "printTechnique": "embroidery"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_print_hoodie_override",
+    "type": "printTechnique",
+    "name": "Hoodie back print override",
+    "parentId": "comp_print",
+    "calcModel": "flat",
+    "value": 5.5,
+    "matches": {
+      "printArea": "back",
+      "printTechnique": "flex",
+      "productType": "hoodie"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_design_premium",
+    "type": "designPremium",
+    "name": "Design premium",
+    "calcModel": "flat",
+    "value": 2,
+    "matches": {},
+    "versionId": "v_seed"
+  }
+]
