@@ -99,6 +99,16 @@ Two things worth knowing:
   and edits will actually stick. No manual migration needed - the
   `collections` table is created on first query.
 
+### Password-protecting the deployment
+
+The app has no user accounts, so anyone with the URL can see and edit
+pricing data unless you lock it down. Set both `BASIC_AUTH_USER` and
+`BASIC_AUTH_PASSWORD` as environment variables on the Vercel project
+(Settings → Environment Variables) and redeploy - every route then
+requires an HTTP Basic Auth prompt (`src/proxy.ts`) before it loads.
+Leaving either variable unset disables the prompt entirely, which is
+also the local dev default - no login needed on `localhost`.
+
 Locally, nothing changes unless you explicitly set `DATABASE_URL`/
 `POSTGRES_URL` in `.env.local` - by default local dev always uses the
 JSON files under `data/`.
