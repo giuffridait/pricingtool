@@ -36,9 +36,9 @@ export function Badge({ children, tone = "info" }: { children: ReactNode; tone?:
 
 export function PageHeader({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="mb-5">
+    <div className="mb-5 rounded-lg bg-neutral-100 dark:bg-white/5 px-4 py-3">
       <h1 className="text-xl font-semibold">{title}</h1>
-      {description && <p className="text-sm text-neutral-500 mt-1 max-w-3xl">{description}</p>}
+      {description && <p className="text-sm text-neutral-700 dark:text-neutral-300 mt-1 max-w-3xl">{description}</p>}
     </div>
   );
 }
