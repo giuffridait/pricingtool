@@ -27,6 +27,8 @@ export default async function OverviewPage({
     warning: openAlerts.filter((a) => a.severity === "warning").length,
     info: openAlerts.filter((a) => a.severity === "info").length,
   };
+  const severityRank = { critical: 0, warning: 1, info: 2 };
+  const topAlerts = [...openAlerts].sort((a, b) => severityRank[a.severity] - severityRank[b.severity]).slice(0, 4);
 
   const rows = await Promise.all(
     catalog.skus.map(async (sku) => {
@@ -67,17 +69,34 @@ export default async function OverviewPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
         <Card title="Open alerts">
-          <div className="flex gap-3 text-sm">
+          <div className="flex gap-3 text-sm mb-3">
             <Link href="/alerts"><Badge tone="critical">{bySeverity.critical} critical</Badge></Link>
             <Link href="/alerts"><Badge tone="warning">{bySeverity.warning} warning</Badge></Link>
             <Link href="/alerts"><Badge tone="info">{bySeverity.info} info</Badge></Link>
           </div>
+          {topAlerts.length === 0 ? (
+            <p className="text-sm text-neutral-500 italic">Nothing open right now.</p>
+          ) : (
+            <ul className="space-y-1.5 text-sm">
+              {topAlerts.map((a) => (
+                <li key={a.id} className="flex items-start gap-2 border-t border-black/10 dark:border-white/10 pt-1.5">
+                  <Badge tone={a.severity}>{a.severity}</Badge>
+                  <span className="text-neutral-700 dark:text-neutral-300">{a.message}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {openAlerts.length > topAlerts.length && (
+            <Link href="/alerts" className="text-xs underline decoration-dotted text-neutral-500 mt-2 inline-block">
+              View all {openAlerts.length} open alerts
+            </Link>
+          )}
         </Card>
 
         <Card title="Getting started - recommended paths">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-xs font-medium text-neutral-500 mb-1.5">New / running a small store</p>
+              <p className="text-xs font-medium text-neutral-500 mb-1.5">New</p>
               <ol className="list-decimal list-inside space-y-1">
                 <li><Link href="/catalog" className="underline decoration-dotted">Catalog & Pricing</Link> - set your base prices</li>
                 <li><Link href="/incentives" className="underline decoration-dotted">Discounts & Incentives</Link> - add a sale or bundle</li>
