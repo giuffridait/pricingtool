@@ -9,13 +9,15 @@ import {
   bundles,
   mixAndMatchSets,
   pricingCalendars,
+  presentationPolicies,
 } from "../repo";
 import { newId } from "../store";
 
 // Draft -> (review) -> approved -> (scheduled) -> active -> reverted workflow,
 // generic across every editable entity type (price overrides, discounts,
 // components, rules, consistency rules, bundles, mix-and-match sets, pricing
-// calendars). `payload: null` means "delete this entity" when activated.
+// calendars, presentation policies). `payload: null` means "delete this
+// entity" when activated.
 
 export type VersionedEntityType =
   | "priceOverride"
@@ -25,7 +27,8 @@ export type VersionedEntityType =
   | "consistencyRule"
   | "bundle"
   | "mixAndMatchSet"
-  | "pricingCalendar";
+  | "pricingCalendar"
+  | "presentationPolicy";
 
 const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +47,8 @@ const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>
   mixAndMatchSet: (p) => mixAndMatchSets.save(p as any),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pricingCalendar: (p) => pricingCalendars.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  presentationPolicy: (p) => presentationPolicies.save(p as any),
 };
 
 const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
@@ -55,6 +60,7 @@ const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
   bundle: bundles.remove,
   mixAndMatchSet: mixAndMatchSets.remove,
   pricingCalendar: pricingCalendars.remove,
+  presentationPolicy: presentationPolicies.remove,
 };
 
 async function latestActiveVersion(entityType: string, entityId: string): Promise<EntityVersion | undefined> {

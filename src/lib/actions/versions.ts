@@ -13,6 +13,7 @@ const PATHS: Record<VersionedEntityType, string> = {
   bundle: "/bundles",
   mixAndMatchSet: "/bundles",
   pricingCalendar: "/calendars",
+  presentationPolicy: "/presentation",
 };
 
 function revalidateFor(entityType: VersionedEntityType) {

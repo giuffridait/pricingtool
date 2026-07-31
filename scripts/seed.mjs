@@ -306,6 +306,22 @@ const mixAndMatchSets = [
   },
 ];
 
+// Presentation is configured separately from the paid price: how a resolved
+// price is displayed (rounding, strikethrough, badges, messaging), not how
+// it's calculated.
+const presentationPolicies = [
+  {
+    id: "pp_apparel", name: "Apparel (EUR, charm pricing)", businessUnitId: "bu_apparel", currency: "EUR",
+    roundingMode: "charm", charmEnding: 0.9,
+    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: true, versionId: "v_seed",
+  },
+  {
+    id: "pp_marketplace", name: "Marketplace (EUR, whole numbers)", businessUnitId: "bu_marketplace", currency: "EUR",
+    roundingMode: "nearestInteger",
+    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: false, versionId: "v_seed",
+  },
+];
+
 const consistencyRules = [
   { id: "cr_premium_gap", name: "Premium tee ≥ core tee +10%", type: "minGapPercent", subjectRefId: "prod_premium_tee", comparatorRefId: "prod_core_tee", threshold: 10, severity: "blocking" },
   { id: "cr_ch_parity", name: "CH price within ±15% of EU", type: "parityDeviation", subjectRefId: "pg_tshirts", comparatorRefId: "CH", threshold: 15, severity: "warning" },
@@ -333,7 +349,7 @@ const alerts = [];
 const collections = {
   businessUnits, shops, productGroups, products, variants, skus,
   priceOverrides, components, discounts, commissions, rules,
-  pricingCalendars, bundles, mixAndMatchSets,
+  pricingCalendars, bundles, mixAndMatchSets, presentationPolicies,
   consistencyRules, experiments, versions, alerts,
 };
 

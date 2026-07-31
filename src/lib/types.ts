@@ -215,6 +215,27 @@ export interface PricingCalendar {
   versionId: ID;
 }
 
+// Presentation is configured separately from the paid price: how a resolved
+// price gets *displayed* (psychological rounding, RRP strikethrough, badges,
+// savings messaging), not how it's calculated. Scoped per BU and optionally
+// per shop/currency, since rounding conventions differ by market.
+export type RoundingMode = "none" | "charm" | "nearestInteger" | "nearestHalf";
+
+export interface PresentationPolicy {
+  id: ID;
+  name: string;
+  businessUnitId: ID;
+  shopId?: ID;
+  currency: string;
+  roundingMode: RoundingMode;
+  charmEnding?: number; // e.g. 0.90 - the fractional part prices round to when roundingMode = "charm"
+  showRrpStrikethrough: boolean;
+  showDiscountBadge: boolean;
+  showFromPrice: boolean;
+  showNextTierMessage: boolean;
+  versionId: ID;
+}
+
 export type CommissionType = "designer" | "creator" | "partner";
 export type CommissionCalc = "percentOfPremium" | "fixedPerItem" | "tieredPercent";
 
@@ -383,6 +404,7 @@ export interface AppliedDiscount {
   stackingGroup: string;
   priority: number;
   amount: number; // per-unit average, same convention as finalPrice
+  badge?: string;
 }
 
 export interface ResolvedPrice {

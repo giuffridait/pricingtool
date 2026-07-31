@@ -208,7 +208,14 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     }
     chosenGroups.add(group);
     discountTotal += c.amount;
-    appliedDiscounts.push({ discountId: c.discount.id, name: c.discount.name, stackingGroup: group, priority: c.rule.priority, amount: c.amount });
+    appliedDiscounts.push({
+      discountId: c.discount.id,
+      name: c.discount.name,
+      stackingGroup: group,
+      priority: c.rule.priority,
+      amount: c.amount,
+      badge: c.discount.badge,
+    });
     trace.push({
       label: "Discount applied",
       detail: `"${c.discount.name}"${c.discount.badge ? ` [${c.discount.badge}]` : ""} (stacking group "${group}") = -${currency} ${c.amount.toFixed(2)}`,

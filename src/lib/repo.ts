@@ -18,6 +18,7 @@ import type {
   Bundle,
   MixAndMatchSet,
   PricingCalendar,
+  PresentationPolicy,
 } from "./types";
 
 // Thin typed accessors over the generic JSON store. Each function maps 1:1 to a
@@ -116,4 +117,10 @@ export const pricingCalendars = {
   all: () => readCollection<PricingCalendar>("pricingCalendars"),
   save: (x: PricingCalendar) => upsert("pricingCalendars", x),
   remove: (id: string) => remove("pricingCalendars", id),
+};
+
+export const presentationPolicies = {
+  all: () => readCollection<PresentationPolicy>("presentationPolicies"),
+  save: (x: PresentationPolicy) => upsert("presentationPolicies", x),
+  remove: (id: string) => remove("presentationPolicies", id),
 };

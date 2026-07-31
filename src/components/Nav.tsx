@@ -11,6 +11,7 @@ const links = [
   { href: "/bundles", label: "Bundles & Mix-and-Match" },
   { href: "/calendars", label: "Pricing Calendars" },
   { href: "/rules", label: "Rules" },
+  { href: "/presentation", label: "Presentation" },
   { href: "/calculator", label: "Price Calculator" },
   { href: "/basket", label: "Basket Calculator" },
   { href: "/checks", label: "Consistency & Sanity" },

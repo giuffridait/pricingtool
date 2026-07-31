@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import type { BusinessUnit, Shop, ResolvedPrice } from "@/lib/types";
 import { calculatePriceAction } from "@/lib/actions/calculator";
+import type { PresentationResult } from "@/lib/engine/presentation";
 import { Badge, Card } from "@/components/ui";
+import PresentationTile from "@/components/PresentationTile";
 
 export interface SkuOption {
   id: string;
@@ -34,12 +36,13 @@ export default function CalculatorForm({
   const [design, setDesign] = useState("");
   const [date, setDate] = useState("");
   const [result, setResult] = useState<ResolvedPrice | null>(null);
+  const [presentation, setPresentation] = useState<PresentationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function run() {
     startTransition(async () => {
-      const { result, error } = await calculatePriceAction({
+      const { result, presentation, error } = await calculatePriceAction({
         skuId,
         businessUnitId,
         shopId: shopId || undefined,
@@ -54,12 +57,13 @@ export default function CalculatorForm({
         date: date ? `${date}:00Z` : undefined,
       });
       setResult(result ?? null);
+      setPresentation(presentation ?? null);
       setError(error ?? null);
     });
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <Card title="Pricing request">
         <div className="space-y-2 text-sm">
           <Field label="SKU">
@@ -142,6 +146,14 @@ export default function CalculatorForm({
           </div>
         )}
         {!result && !error && <p className="text-sm text-neutral-500 italic">Run a pricing request to see the trace.</p>}
+      </Card>
+
+      <Card title="Customer-facing view">
+        {presentation ? (
+          <PresentationTile presentation={presentation} />
+        ) : (
+          <p className="text-sm text-neutral-500 italic">Shows how this price would render on a product page - RRP strikethrough, badge, and savings messaging.</p>
+        )}
       </Card>
     </div>
   );

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "pp_apparel",
+    "name": "Apparel (EUR, charm pricing)",
+    "businessUnitId": "bu_apparel",
+    "currency": "EUR",
+    "roundingMode": "charm",
+    "charmEnding": 0.9,
+    "showRrpStrikethrough": true,
+    "showDiscountBadge": true,
+    "showFromPrice": true,
+    "showNextTierMessage": true,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "pp_marketplace",
+    "name": "Marketplace (EUR, whole numbers)",
+    "businessUnitId": "bu_marketplace",
+    "currency": "EUR",
+    "roundingMode": "nearestInteger",
+    "showRrpStrikethrough": true,
+    "showDiscountBadge": true,
+    "showFromPrice": true,
+    "showNextTierMessage": false,
+    "versionId": "v_seed"
+  }
+]
