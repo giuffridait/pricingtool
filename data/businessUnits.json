@@ -2,5 +2,9 @@
   {
     "id": "bu_apparel",
     "name": "Apparel BU"
+  },
+  {
+    "id": "bu_marketplace",
+    "name": "Marketplace BU"
   }
 ]

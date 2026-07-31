@@ -1,11 +1,27 @@
 [
   {
+    "id": "sku_premium_tee_red_s",
+    "level": "sku",
+    "name": "red / S",
+    "variantId": "var_premium_tee_red",
+    "size": "S",
+    "costBasis": 9.5
+  },
+  {
     "id": "sku_premium_tee_red_m",
     "level": "sku",
     "name": "red / M",
     "variantId": "var_premium_tee_red",
     "size": "M",
     "costBasis": 10
+  },
+  {
+    "id": "sku_premium_tee_red_l",
+    "level": "sku",
+    "name": "red / L",
+    "variantId": "var_premium_tee_red",
+    "size": "L",
+    "costBasis": 10.5
   },
   {
     "id": "sku_premium_tee_red_xxl",
@@ -24,10 +40,34 @@
     "costBasis": 10
   },
   {
+    "id": "sku_premium_tee_black_l",
+    "level": "sku",
+    "name": "black / L",
+    "variantId": "var_premium_tee_black",
+    "size": "L",
+    "costBasis": 10.5
+  },
+  {
+    "id": "sku_premium_tee_blue_m",
+    "level": "sku",
+    "name": "blue / M",
+    "variantId": "var_premium_tee_blue",
+    "size": "M",
+    "costBasis": 10
+  },
+  {
     "id": "sku_core_tee_white_m",
     "level": "sku",
     "name": "white / M",
     "variantId": "var_core_tee_white",
+    "size": "M",
+    "costBasis": 8
+  },
+  {
+    "id": "sku_core_tee_black_m",
+    "level": "sku",
+    "name": "black / M",
+    "variantId": "var_core_tee_black",
     "size": "M",
     "costBasis": 8
   },
@@ -54,5 +94,133 @@
     "variantId": "var_hoodie_black",
     "size": "XL",
     "costBasis": 15.5
+  },
+  {
+    "id": "sku_zip_hoodie_grey_m",
+    "level": "sku",
+    "name": "grey / M",
+    "variantId": "var_zip_hoodie_grey",
+    "size": "M",
+    "costBasis": 16
+  },
+  {
+    "id": "sku_zip_hoodie_grey_l",
+    "level": "sku",
+    "name": "grey / L",
+    "variantId": "var_zip_hoodie_grey",
+    "size": "L",
+    "costBasis": 16.5
+  },
+  {
+    "id": "sku_tote_natural_os",
+    "level": "sku",
+    "name": "natural / OS",
+    "variantId": "var_tote_natural",
+    "size": "OS",
+    "costBasis": 4
+  },
+  {
+    "id": "sku_tote_black_os",
+    "level": "sku",
+    "name": "black / OS",
+    "variantId": "var_tote_black",
+    "size": "OS",
+    "costBasis": 4.2
+  },
+  {
+    "id": "sku_mug_white_11oz",
+    "level": "sku",
+    "name": "white / 11oz",
+    "variantId": "var_mug_white",
+    "size": "11oz",
+    "costBasis": 3
+  },
+  {
+    "id": "sku_mug_white_15oz",
+    "level": "sku",
+    "name": "white / 15oz",
+    "variantId": "var_mug_white",
+    "size": "15oz",
+    "costBasis": 3.6
+  },
+  {
+    "id": "sku_mug_black_11oz",
+    "level": "sku",
+    "name": "black / 11oz",
+    "variantId": "var_mug_black",
+    "size": "11oz",
+    "costBasis": 3.2
+  },
+  {
+    "id": "sku_case_clear_iphone15",
+    "level": "sku",
+    "name": "clear / iPhone 15",
+    "variantId": "var_phonecase_clear",
+    "size": "iPhone15",
+    "costBasis": 4
+  },
+  {
+    "id": "sku_case_clear_iphone15pro",
+    "level": "sku",
+    "name": "clear / iPhone 15 Pro",
+    "variantId": "var_phonecase_clear",
+    "size": "iPhone15Pro",
+    "costBasis": 4.5
+  },
+  {
+    "id": "sku_case_black_iphone15",
+    "level": "sku",
+    "name": "black / iPhone 15",
+    "variantId": "var_phonecase_black",
+    "size": "iPhone15",
+    "costBasis": 4
+  },
+  {
+    "id": "sku_case_black_galaxys24",
+    "level": "sku",
+    "name": "black / Galaxy S24",
+    "variantId": "var_phonecase_black",
+    "size": "GalaxyS24",
+    "costBasis": 4
+  },
+  {
+    "id": "sku_poster_matte_a4",
+    "level": "sku",
+    "name": "matte / A4",
+    "variantId": "var_poster_matte",
+    "size": "A4",
+    "costBasis": 3
+  },
+  {
+    "id": "sku_poster_matte_a3",
+    "level": "sku",
+    "name": "matte / A3",
+    "variantId": "var_poster_matte",
+    "size": "A3",
+    "costBasis": 5
+  },
+  {
+    "id": "sku_poster_matte_a2",
+    "level": "sku",
+    "name": "matte / A2",
+    "variantId": "var_poster_matte",
+    "size": "A2",
+    "costBasis": 8
+  },
+  {
+    "id": "sku_poster_glossy_a4",
+    "level": "sku",
+    "name": "glossy / A4",
+    "variantId": "var_poster_glossy",
+    "size": "A4",
+    "costBasis": 3.2
+  },
+  {
+    "id": "sku_poster_glossy_a3",
+    "level": "sku",
+    "name": "glossy / A3",
+    "variantId": "var_poster_glossy",
+    "size": "A3",
+    "costBasis": 5.3
   }
 ]

@@ -24,11 +24,35 @@
     "currency": "GBP"
   },
   {
+    "id": "shop_fr",
+    "name": "France Store",
+    "businessUnitId": "bu_apparel",
+    "market": "FR",
+    "channel": "web",
+    "currency": "EUR"
+  },
+  {
     "id": "shop_mobile_de",
     "name": "Mobile App (DE)",
     "businessUnitId": "bu_apparel",
     "market": "DE",
     "channel": "mobile",
+    "currency": "EUR"
+  },
+  {
+    "id": "shop_us_mp",
+    "name": "US Marketplace",
+    "businessUnitId": "bu_marketplace",
+    "market": "US",
+    "channel": "web",
+    "currency": "USD"
+  },
+  {
+    "id": "shop_de_mp",
+    "name": "Germany Marketplace",
+    "businessUnitId": "bu_marketplace",
+    "market": "DE",
+    "channel": "web",
     "currency": "EUR"
   }
 ]

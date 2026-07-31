@@ -126,5 +126,52 @@
     },
     "priority": 5,
     "versionId": "v_seed"
+  },
+  {
+    "id": "rule_mug_bogo",
+    "name": "Mug BOGO",
+    "scope": {
+      "productId": "prod_mug"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_mug_bogo"
+    },
+    "priority": 20,
+    "stackingGroup": "multibuy_mugs",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_poster_promo",
+    "name": "Poster US launch promo",
+    "scope": {
+      "productGroupId": "pg_posters"
+    },
+    "dimensions": {
+      "market": "US"
+    },
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_poster_promo"
+    },
+    "priority": 30,
+    "stackingGroup": "poster_promo",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_tote_promo",
+    "name": "Tote intro promo",
+    "scope": {
+      "productId": "prod_tote"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_tote_promo"
+    },
+    "priority": 15,
+    "stackingGroup": "tote_promo",
+    "versionId": "v_seed"
   }
 ]

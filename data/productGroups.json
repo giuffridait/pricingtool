@@ -10,5 +10,29 @@
     "level": "productGroup",
     "name": "Hoodies",
     "businessUnitId": "bu_apparel"
+  },
+  {
+    "id": "pg_totes",
+    "level": "productGroup",
+    "name": "Tote Bags",
+    "businessUnitId": "bu_apparel"
+  },
+  {
+    "id": "pg_mugs",
+    "level": "productGroup",
+    "name": "Mugs",
+    "businessUnitId": "bu_apparel"
+  },
+  {
+    "id": "pg_phonecases",
+    "level": "productGroup",
+    "name": "Phone Cases",
+    "businessUnitId": "bu_marketplace"
+  },
+  {
+    "id": "pg_posters",
+    "level": "productGroup",
+    "name": "Fine Art Prints",
+    "businessUnitId": "bu_marketplace"
   }
 ]

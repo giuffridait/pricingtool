@@ -15,18 +15,21 @@ export default async function ChecksPage() {
     priceOverrides.all(),
     loadCatalog(),
   ]);
-  const bu = bus[0];
-
-  const violations = [
+  // Run every check across all business units, not just one - consistency/sanity
+  // rules can target catalog nodes in any BU.
+  const violations = bus.flatMap((bu) => [
     ...runConsistencyChecks(catalog, overrides, allConsistencyRules, bu.id),
     ...runParityChecks(catalog, overrides, allConsistencyRules, bu.id, allShops),
-  ];
+  ]);
   const violationMessages: Record<string, string[]> = {};
   for (const v of violations) {
     (violationMessages[v.rule.id] ??= []).push(v.message);
   }
 
-  const sanityFindings = runSanityChecks(catalog, overrides, allRules, allDiscounts, allShops, bu.id);
+  // Some detectors aren't BU-specific but still run once per BU above, so
+  // dedupe by finding id (which already encodes the specific anomaly).
+  const rawSanityFindings = bus.flatMap((bu) => runSanityChecks(catalog, overrides, allRules, allDiscounts, allShops, bu.id));
+  const sanityFindings = [...new Map(rawSanityFindings.map((f) => [f.id, f])).values()];
 
   const refOptions: RefOption[] = [
     ...catalog.productGroups.map((g) => ({ label: `Group: ${g.name}`, id: g.id })),

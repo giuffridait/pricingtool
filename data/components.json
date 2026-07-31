@@ -47,5 +47,62 @@
     "value": 2,
     "matches": {},
     "versionId": "v_seed"
+  },
+  {
+    "id": "comp_print_pod_default",
+    "type": "printTechnique",
+    "name": "DTG print (default)",
+    "calcModel": "flat",
+    "value": 3,
+    "matches": {
+      "printTechnique": "dtg"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_print_pod_mug",
+    "type": "printTechnique",
+    "name": "DTG print, mug wrap",
+    "parentId": "comp_print_pod_default",
+    "calcModel": "flat",
+    "value": 2,
+    "matches": {
+      "printTechnique": "dtg",
+      "productType": "mug"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_case_uv_print",
+    "type": "printTechnique",
+    "name": "UV print, phone case",
+    "calcModel": "flat",
+    "value": 4,
+    "matches": {
+      "printTechnique": "uv"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_poster_giclee",
+    "type": "printTechnique",
+    "name": "Giclée print",
+    "calcModel": "percentOfSubtotal",
+    "value": 15,
+    "matches": {
+      "printTechnique": "giclee"
+    },
+    "versionId": "v_seed"
+  },
+  {
+    "id": "comp_personalisation_engraving",
+    "type": "personalisation",
+    "name": "Laser engraving",
+    "calcModel": "flat",
+    "value": 3,
+    "matches": {
+      "personalisation": "engraving"
+    },
+    "versionId": "v_seed"
   }
 ]

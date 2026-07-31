@@ -102,5 +102,53 @@
     "stackingGroup": "volume",
     "priority": 10,
     "versionId": "v_seed"
+  },
+  {
+    "id": "disc_mug_bogo",
+    "name": "Buy 3 mugs, pay for 2",
+    "type": "bogo",
+    "bogo": {
+      "buyQty": 3,
+      "payQty": 2,
+      "cheapestFree": true
+    },
+    "scope": {
+      "productId": "prod_mug"
+    },
+    "eligibility": {},
+    "stackingGroup": "multibuy_mugs",
+    "priority": 20,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_poster_promo",
+    "name": "US launch promo",
+    "type": "percentOff",
+    "value": 10,
+    "scope": {
+      "productGroupId": "pg_posters"
+    },
+    "eligibility": {
+      "markets": [
+        "US"
+      ]
+    },
+    "stackingGroup": "poster_promo",
+    "priority": 30,
+    "badge": "10% OFF",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_tote_promo",
+    "name": "Tote intro discount",
+    "type": "amountOff",
+    "value": 2,
+    "scope": {
+      "productId": "prod_tote"
+    },
+    "eligibility": {},
+    "stackingGroup": "tote_promo",
+    "priority": 15,
+    "versionId": "v_seed"
   }
 ]

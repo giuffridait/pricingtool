@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { newId } from "../store";
-import type { ComponentType, CalcModel } from "../types";
+import type { ComponentType, CalcModel, PriceComponent } from "../types";
 import { saveVersioned, deleteVersioned } from "./helpers";
 
 export interface ComponentInput {
@@ -13,7 +13,7 @@ export interface ComponentInput {
   calcModel: CalcModel;
   value: number;
   stitchCount?: number;
-  matches: { productType?: string; appearance?: string; size?: string; design?: string };
+  matches: PriceComponent["matches"];
 }
 
 export async function saveComponentAction(input: ComponentInput) {

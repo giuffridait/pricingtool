@@ -20,10 +20,68 @@
     "versionId": "v_seed"
   },
   {
+    "id": "po_pg_totes",
+    "level": "productGroup",
+    "refId": "pg_totes",
+    "businessUnitId": "bu_apparel",
+    "price": 12,
+    "currency": "EUR",
+    "floor": 8,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_pg_mugs",
+    "level": "productGroup",
+    "refId": "pg_mugs",
+    "businessUnitId": "bu_apparel",
+    "price": 9,
+    "currency": "EUR",
+    "floor": 6,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_pg_phonecases",
+    "level": "productGroup",
+    "refId": "pg_phonecases",
+    "businessUnitId": "bu_marketplace",
+    "price": 15,
+    "currency": "EUR",
+    "floor": 10,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_pg_posters",
+    "level": "productGroup",
+    "refId": "pg_posters",
+    "businessUnitId": "bu_marketplace",
+    "price": 18,
+    "currency": "EUR",
+    "floor": 12,
+    "versionId": "v_seed"
+  },
+  {
     "id": "po_prod_core_tee",
     "level": "product",
     "refId": "prod_core_tee",
     "businessUnitId": "bu_apparel",
+    "price": 20,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_prod_zip_hoodie",
+    "level": "product",
+    "refId": "prod_zip_hoodie",
+    "businessUnitId": "bu_apparel",
+    "price": 34,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_prod_poster",
+    "level": "product",
+    "refId": "prod_poster",
+    "businessUnitId": "bu_marketplace",
     "price": 20,
     "currency": "EUR",
     "versionId": "v_seed"
@@ -38,11 +96,38 @@
     "versionId": "v_seed"
   },
   {
+    "id": "po_var_tote_black",
+    "level": "variant",
+    "refId": "var_tote_black",
+    "businessUnitId": "bu_apparel",
+    "price": 13,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_var_mug_black",
+    "level": "variant",
+    "refId": "var_mug_black",
+    "businessUnitId": "bu_apparel",
+    "price": 9.5,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
     "id": "po_sku_premium_tee_red_xxl",
     "level": "sku",
     "refId": "sku_premium_tee_red_xxl",
     "businessUnitId": "bu_apparel",
     "price": 24,
+    "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_sku_case_clear_iphone15pro",
+    "level": "sku",
+    "refId": "sku_case_clear_iphone15pro",
+    "businessUnitId": "bu_marketplace",
+    "price": 17,
     "currency": "EUR",
     "versionId": "v_seed"
   },
@@ -54,6 +139,16 @@
     "shopId": "shop_de",
     "price": 21,
     "currency": "EUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "po_pg_posters_shop_us_mp",
+    "level": "productGroup",
+    "refId": "pg_posters",
+    "businessUnitId": "bu_marketplace",
+    "shopId": "shop_us_mp",
+    "price": 22,
+    "currency": "USD",
     "versionId": "v_seed"
   },
   {

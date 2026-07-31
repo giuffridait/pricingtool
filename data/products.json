@@ -19,5 +19,40 @@
     "name": "Classic Hoodie",
     "productGroupId": "pg_hoodies",
     "productType": "hoodie"
+  },
+  {
+    "id": "prod_zip_hoodie",
+    "level": "product",
+    "name": "Zip Hoodie",
+    "productGroupId": "pg_hoodies",
+    "productType": "hoodie"
+  },
+  {
+    "id": "prod_tote",
+    "level": "product",
+    "name": "Canvas Tote",
+    "productGroupId": "pg_totes",
+    "productType": "tote"
+  },
+  {
+    "id": "prod_mug",
+    "level": "product",
+    "name": "Ceramic Mug",
+    "productGroupId": "pg_mugs",
+    "productType": "mug"
+  },
+  {
+    "id": "prod_phonecase",
+    "level": "product",
+    "name": "Slim Phone Case",
+    "productGroupId": "pg_phonecases",
+    "productType": "phonecase"
+  },
+  {
+    "id": "prod_poster",
+    "level": "product",
+    "name": "Fine Art Print",
+    "productGroupId": "pg_posters",
+    "productType": "poster"
   }
 ]

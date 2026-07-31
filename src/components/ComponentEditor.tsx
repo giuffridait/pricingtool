@@ -96,6 +96,9 @@ function ComponentForm({ components, initial, onDone }: { components: PriceCompo
   const [appearance, setAppearance] = useState(initial?.matches.appearance ?? "");
   const [size, setSize] = useState(initial?.matches.size ?? "");
   const [design, setDesign] = useState(initial?.matches.design ?? "");
+  const [printArea, setPrintArea] = useState(initial?.matches.printArea ?? "");
+  const [printTechnique, setPrintTechnique] = useState(initial?.matches.printTechnique ?? "");
+  const [personalisation, setPersonalisation] = useState(initial?.matches.personalisation ?? "");
   const [pending, startTransition] = useTransition();
 
   function submit() {
@@ -112,6 +115,9 @@ function ComponentForm({ components, initial, onDone }: { components: PriceCompo
           productType: productType || undefined,
           appearance: appearance || undefined,
           size: size || undefined,
+          printArea: printArea || undefined,
+          printTechnique: printTechnique || undefined,
+          personalisation: personalisation || undefined,
           design: design || undefined,
         },
       });
@@ -154,6 +160,9 @@ function ComponentForm({ components, initial, onDone }: { components: PriceCompo
       <input value={appearance} onChange={(e) => setAppearance(e.target.value)} placeholder="appearance" className="border rounded px-1 py-0.5 w-24 bg-transparent" />
       <input value={size} onChange={(e) => setSize(e.target.value)} placeholder="size" className="border rounded px-1 py-0.5 w-16 bg-transparent" />
       <input value={design} onChange={(e) => setDesign(e.target.value)} placeholder="design" className="border rounded px-1 py-0.5 w-20 bg-transparent" />
+      <input value={printArea} onChange={(e) => setPrintArea(e.target.value)} placeholder="printArea" className="border rounded px-1 py-0.5 w-24 bg-transparent" />
+      <input value={printTechnique} onChange={(e) => setPrintTechnique(e.target.value)} placeholder="printTechnique" className="border rounded px-1 py-0.5 w-28 bg-transparent" />
+      <input value={personalisation} onChange={(e) => setPersonalisation(e.target.value)} placeholder="personalisation" className="border rounded px-1 py-0.5 w-28 bg-transparent" />
       <button disabled={pending || !name || !value} onClick={submit} className="rounded bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-2 py-0.5">
         Save
       </button>

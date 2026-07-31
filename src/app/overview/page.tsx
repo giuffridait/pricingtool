@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { businessUnits, shops } from "@/lib/repo";
+import { shops, priceOverrides, businessUnits } from "@/lib/repo";
 import { loadCatalog } from "@/lib/engine/catalog";
-import { priceOverrides } from "@/lib/repo";
 import { resolveBasePrice } from "@/lib/engine/base";
 import { resolvePrice } from "@/lib/engine/price";
 import { generateAlerts } from "@/lib/engine/alerts";
@@ -13,14 +12,13 @@ export default async function OverviewPage({
   searchParams: Promise<{ shop?: string }>;
 }) {
   const { shop: shopFilter } = await searchParams;
-  const [bus, allShops, catalog, overrides, alerts] = await Promise.all([
-    businessUnits.all(),
+  const [allShops, catalog, overrides, alerts, bus] = await Promise.all([
     shops.all(),
     loadCatalog(),
     priceOverrides.all(),
     generateAlerts(),
+    businessUnits.all(),
   ]);
-  const bu = bus[0];
   const selectedShop = shopFilter ? allShops.find((s) => s.id === shopFilter) : undefined;
 
   const openAlerts = alerts.filter((a) => !a.acknowledged);
@@ -36,16 +34,21 @@ export default async function OverviewPage({
       const product = catalog.products.find((p) => p.id === variant.productId)!;
       const productGroup = catalog.productGroups.find((g) => g.id === product.productGroupId)!;
       const ids = { productGroupId: productGroup.id, productId: product.id, variantId: variant.id, skuId: sku.id };
-      const base = resolveBasePrice(overrides, ids, { businessUnitId: bu.id, shopId: selectedShop?.id });
+      // Each SKU belongs to exactly one BU (via its product group) - resolve
+      // against that, not a page-wide default, now that the catalog spans
+      // more than one business unit.
+      const businessUnitId = productGroup.businessUnitId;
+      const contextShop = selectedShop?.businessUnitId === businessUnitId ? selectedShop : undefined;
+      const base = resolveBasePrice(overrides, ids, { businessUnitId, shopId: contextShop?.id });
       let resolvedPrice: number | null = null;
       let resolvedWarning: string | null = null;
       try {
         const resolved = await resolvePrice({
           skuId: sku.id,
-          businessUnitId: bu.id,
-          shopId: selectedShop?.id,
-          market: selectedShop?.market,
-          channel: selectedShop?.channel,
+          businessUnitId,
+          shopId: contextShop?.id,
+          market: contextShop?.market,
+          channel: contextShop?.channel,
         });
         resolvedPrice = resolved.finalPrice;
       } catch (e) {
@@ -76,12 +79,19 @@ export default async function OverviewPage({
         <label htmlFor="shop" className="text-neutral-500">Shop / market context:</label>
         <select id="shop" name="shop" defaultValue={shopFilter ?? ""} className="border border-black/10 dark:border-white/10 rounded px-2 py-1 bg-transparent">
           <option value="">BU-wide default (no shop)</option>
-          {allShops.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name} ({s.market}/{s.channel}, {s.currency})
-            </option>
+          {bus.map((bu) => (
+            <optgroup key={bu.id} label={bu.name}>
+              {allShops
+                .filter((s) => s.businessUnitId === bu.id)
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.market}/{s.channel}, {s.currency})
+                  </option>
+                ))}
+            </optgroup>
           ))}
         </select>
+        <span className="text-neutral-400 text-xs">(only applies to rows in the matching business unit; others still show their own BU-wide default)</span>
         <button className="rounded bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-3 py-1" type="submit">
           Apply
         </button>
@@ -91,6 +101,7 @@ export default async function OverviewPage({
         <table className="w-full text-sm">
           <thead className="bg-black/5 dark:bg-white/5 text-left">
             <tr>
+              <th className="p-2">BU</th>
               <th className="p-2">Product group</th>
               <th className="p-2">Product</th>
               <th className="p-2">Variant</th>
@@ -103,6 +114,7 @@ export default async function OverviewPage({
           <tbody>
             {rows.map(({ sku, variant, product, productGroup, base, resolvedPrice, resolvedWarning }) => (
               <tr key={sku.id} className="border-t border-black/5 dark:border-white/5">
+                <td className="p-2 text-neutral-500 text-xs">{bus.find((b) => b.id === productGroup.businessUnitId)?.name}</td>
                 <td className="p-2">{productGroup.name}</td>
                 <td className="p-2">{product.name}</td>
                 <td className="p-2">{variant.name}</td>

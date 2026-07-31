@@ -14,6 +14,13 @@
     "appearance": "black"
   },
   {
+    "id": "var_premium_tee_blue",
+    "level": "variant",
+    "name": "Premium Tee blue",
+    "productId": "prod_premium_tee",
+    "appearance": "blue"
+  },
+  {
     "id": "var_core_tee_white",
     "level": "variant",
     "name": "Core Tee white",
@@ -21,10 +28,80 @@
     "appearance": "white"
   },
   {
+    "id": "var_core_tee_black",
+    "level": "variant",
+    "name": "Core Tee black",
+    "productId": "prod_core_tee",
+    "appearance": "black"
+  },
+  {
     "id": "var_hoodie_black",
     "level": "variant",
     "name": "Classic Hoodie black",
     "productId": "prod_hoodie",
     "appearance": "black"
+  },
+  {
+    "id": "var_zip_hoodie_grey",
+    "level": "variant",
+    "name": "Zip Hoodie grey",
+    "productId": "prod_zip_hoodie",
+    "appearance": "grey"
+  },
+  {
+    "id": "var_tote_natural",
+    "level": "variant",
+    "name": "Canvas Tote natural",
+    "productId": "prod_tote",
+    "appearance": "natural"
+  },
+  {
+    "id": "var_tote_black",
+    "level": "variant",
+    "name": "Canvas Tote black",
+    "productId": "prod_tote",
+    "appearance": "black"
+  },
+  {
+    "id": "var_mug_white",
+    "level": "variant",
+    "name": "Ceramic Mug white",
+    "productId": "prod_mug",
+    "appearance": "white"
+  },
+  {
+    "id": "var_mug_black",
+    "level": "variant",
+    "name": "Ceramic Mug black",
+    "productId": "prod_mug",
+    "appearance": "black"
+  },
+  {
+    "id": "var_phonecase_clear",
+    "level": "variant",
+    "name": "Slim Phone Case clear",
+    "productId": "prod_phonecase",
+    "appearance": "clear"
+  },
+  {
+    "id": "var_phonecase_black",
+    "level": "variant",
+    "name": "Slim Phone Case black",
+    "productId": "prod_phonecase",
+    "appearance": "black"
+  },
+  {
+    "id": "var_poster_matte",
+    "level": "variant",
+    "name": "Fine Art Print matte",
+    "productId": "prod_poster",
+    "appearance": "matte"
+  },
+  {
+    "id": "var_poster_glossy",
+    "level": "variant",
+    "name": "Fine Art Print glossy",
+    "productId": "prod_poster",
+    "appearance": "glossy"
   }
 ]

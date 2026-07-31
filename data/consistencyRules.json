@@ -13,8 +13,17 @@
     "name": "CH price within ±15% of EU",
     "type": "parityDeviation",
     "subjectRefId": "pg_tshirts",
-    "comparatorRefId": "EU",
+    "comparatorRefId": "CH",
     "threshold": 15,
+    "severity": "warning"
+  },
+  {
+    "id": "cr_ziphoodie_gap",
+    "name": "Zip Hoodie ≥ Classic Hoodie +10%",
+    "type": "minGapPercent",
+    "subjectRefId": "prod_zip_hoodie",
+    "comparatorRefId": "prod_hoodie",
+    "threshold": 10,
     "severity": "warning"
   }
 ]

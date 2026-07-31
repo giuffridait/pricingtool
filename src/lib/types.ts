@@ -88,6 +88,9 @@ export interface PriceComponent {
     appearance?: string;
     size?: string;
     design?: string;
+    printArea?: string;
+    printTechnique?: string;
+    personalisation?: string;
   };
   versionId: ID;
 }

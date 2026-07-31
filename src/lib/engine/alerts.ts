@@ -148,8 +148,13 @@ export async function generateAlerts(): Promise<Alert[]> {
     }
   }
 
+  // Some checks (e.g. overlapping discount tiers) aren't BU-specific but still
+  // run once per BU in the loop above, so the same alert id can surface twice;
+  // dedupe by id (which already encodes the specific finding) before merging.
+  const deduped = [...new Map(fresh.map((a) => [a.id, a])).values()];
+
   const existing = await alertsRepo.all();
-  const merged = fresh.map((a) => {
+  const merged = deduped.map((a) => {
     const prior = existing.find((e) => e.id === a.id);
     return prior ? { ...a, acknowledged: prior.acknowledged, createdAt: prior.createdAt } : a;
   });

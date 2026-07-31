@@ -30,5 +30,16 @@
     ],
     "scope": {},
     "source": "payout-system-mock"
+  },
+  {
+    "id": "comm_poster_partner",
+    "name": "Fine art print partner fee",
+    "type": "partner",
+    "calc": "fixedPerItem",
+    "value": 3,
+    "scope": {
+      "productGroupId": "pg_posters"
+    },
+    "source": "payout-system-mock"
   }
 ]
