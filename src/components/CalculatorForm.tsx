@@ -51,7 +51,7 @@ export default function CalculatorForm({
         printTechnique: printTechnique || undefined,
         personalisation: personalisation || undefined,
         design: design || undefined,
-        date: date || undefined,
+        date: date ? `${date}:00Z` : undefined,
       });
       setResult(result ?? null);
       setError(error ?? null);
@@ -99,7 +99,7 @@ export default function CalculatorForm({
             <Field label="Print technique"><input value={printTechnique} onChange={(e) => setPrintTechnique(e.target.value)} placeholder="flex / embroidery" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
             <Field label="Personalisation"><input value={personalisation} onChange={(e) => setPersonalisation(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
             <Field label="Design"><input value={design} onChange={(e) => setDesign(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="As-of date"><input value={date} onChange={(e) => setDate(e.target.value)} type="date" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
+            <Field label="As-of date/time (UTC)"><input value={date} onChange={(e) => setDate(e.target.value)} type="datetime-local" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
           </div>
           <button disabled={pending} onClick={run} className="rounded bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-3 py-1.5 mt-2">
             {pending ? "Resolving…" : "Resolve price"}

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mnm_tee_group",
+    "name": "Any 3 Premium Tees for €45",
+    "businessUnitId": "bu_apparel",
+    "group": {
+      "productIds": [
+        "prod_premium_tee"
+      ]
+    },
+    "requiredCount": 3,
+    "setPrice": 45,
+    "currency": "EUR",
+    "eligibility": {},
+    "priority": 10,
+    "versionId": "v_seed"
+  }
+]

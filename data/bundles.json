@@ -1,0 +1,22 @@
+[
+  {
+    "id": "bundle_team_starter",
+    "name": "Team starter set",
+    "businessUnitId": "bu_apparel",
+    "components": [
+      {
+        "skuId": "sku_hoodie_black_m",
+        "quantity": 1
+      },
+      {
+        "skuId": "sku_premium_tee_red_m",
+        "quantity": 2
+      }
+    ],
+    "bundlePrice": 55,
+    "currency": "EUR",
+    "eligibility": {},
+    "priority": 10,
+    "versionId": "v_seed"
+  }
+]

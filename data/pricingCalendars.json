@@ -1,0 +1,31 @@
+[
+  {
+    "id": "cal_weekend",
+    "name": "Weekend",
+    "type": "dayOfWeek",
+    "daysOfWeek": [
+      0,
+      6
+    ],
+    "versionId": "v_seed"
+  },
+  {
+    "id": "cal_friday_happy_hour",
+    "name": "Friday happy hour (18-20h UTC)",
+    "type": "dayOfWeek",
+    "daysOfWeek": [
+      5
+    ],
+    "startHour": 18,
+    "endHour": 20,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "cal_christmas",
+    "name": "Christmas season",
+    "type": "seasonal",
+    "seasonalStart": "11-01",
+    "seasonalEnd": "12-24",
+    "versionId": "v_seed"
+  }
+]

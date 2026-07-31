@@ -16,6 +16,7 @@ export interface RuleInput {
   exclusionGroups?: string[];
   validFrom?: string;
   validTo?: string;
+  calendarId?: string;
 }
 
 export async function saveRuleAction(input: RuleInput) {
@@ -34,6 +35,7 @@ export async function saveRuleAction(input: RuleInput) {
       exclusionGroups: input.exclusionGroups,
       validFrom: input.validFrom || undefined,
       validTo: input.validTo || undefined,
+      calendarId: input.calendarId || undefined,
       versionId,
     }),
     { note: `Saved rule "${input.name}"` },

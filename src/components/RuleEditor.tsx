@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { PricingRule, RuleEffectType, BusinessUnit, Shop, Discount, PriceComponent, Commission } from "@/lib/types";
+import type { PricingRule, RuleEffectType, BusinessUnit, Shop, Discount, PriceComponent, Commission, PricingCalendar } from "@/lib/types";
 import { saveRuleAction, deleteRuleAction } from "@/lib/actions/rules";
 import { Badge, Card } from "@/components/ui";
 import type { ScopeOption } from "@/components/DiscountEditor";
@@ -16,6 +16,7 @@ export default function RuleEditor({
   discounts,
   components,
   commissions,
+  calendars,
 }: {
   rules: PricingRule[];
   scopeOptions: ScopeOption[];
@@ -24,9 +25,10 @@ export default function RuleEditor({
   discounts: Discount[];
   components: PriceComponent[];
   commissions: Commission[];
+  calendars: PricingCalendar[];
 }) {
   const [editing, setEditing] = useState<string | "new" | null>(null);
-  const refs = { scopeOptions, businessUnits, shops, discounts, components, commissions };
+  const refs = { scopeOptions, businessUnits, shops, discounts, components, commissions, calendars };
 
   return (
     <Card
@@ -60,6 +62,7 @@ export default function RuleEditor({
                       .join(", ") || "any"}{" "}
                     · effect: {effectLabel(r, discounts, components, commissions)}
                     {r.validFrom || r.validTo ? ` · valid ${r.validFrom ?? "…"} → ${r.validTo ?? "…"}` : ""}
+                    {r.calendarId ? ` · calendar: ${calendars.find((c) => c.id === r.calendarId)?.name ?? r.calendarId}` : ""}
                     {r.exclusionGroups?.length ? ` · excludes: ${r.exclusionGroups.join(", ")}` : ""}
                   </div>
                 </div>
@@ -106,6 +109,7 @@ function RuleForm({
   discounts,
   components,
   commissions,
+  calendars,
   initial,
   onDone,
 }: {
@@ -115,6 +119,7 @@ function RuleForm({
   discounts: Discount[];
   components: PriceComponent[];
   commissions: Commission[];
+  calendars: PricingCalendar[];
   initial?: PricingRule;
   onDone: () => void;
 }) {
@@ -135,6 +140,7 @@ function RuleForm({
   const [exclusionGroups, setExclusionGroups] = useState((initial?.exclusionGroups ?? []).join(", "));
   const [validFrom, setValidFrom] = useState(initial?.validFrom ?? "");
   const [validTo, setValidTo] = useState(initial?.validTo ?? "");
+  const [calendarId, setCalendarId] = useState(initial?.calendarId ?? "");
   const [pending, startTransition] = useTransition();
 
   function scopeFromId(id: string) {
@@ -168,6 +174,7 @@ function RuleForm({
         exclusionGroups: exclusionGroups ? exclusionGroups.split(",").map((g) => g.trim()).filter(Boolean) : undefined,
         validFrom: validFrom || undefined,
         validTo: validTo || undefined,
+        calendarId: calendarId || undefined,
       });
       onDone();
     });
@@ -258,6 +265,14 @@ function RuleForm({
         <span className="text-neutral-500">validity:</span>
         <input value={validFrom} onChange={(e) => setValidFrom(e.target.value)} type="date" className="border rounded px-1 py-0.5 bg-transparent" />
         <input value={validTo} onChange={(e) => setValidTo(e.target.value)} type="date" className="border rounded px-1 py-0.5 bg-transparent" />
+        <select value={calendarId} onChange={(e) => setCalendarId(e.target.value)} className="border rounded px-1 py-0.5 bg-transparent">
+          <option value="">no recurring calendar</option>
+          {calendars.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex gap-2">

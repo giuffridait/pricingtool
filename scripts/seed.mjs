@@ -131,11 +131,43 @@ const components = [
   { id: "comp_personalisation_engraving", type: "personalisation", name: "Laser engraving", calcModel: "flat", value: 3, matches: { personalisation: "engraving" }, versionId: "v_seed" },
 ];
 
+// Recurring pricing windows: "every weekend", "Fridays 18-20h", and a yearly seasonal range.
+const pricingCalendars = [
+  { id: "cal_weekend", name: "Weekend", type: "dayOfWeek", daysOfWeek: [0, 6], versionId: "v_seed" },
+  { id: "cal_friday_happy_hour", name: "Friday happy hour (18-20h UTC)", type: "dayOfWeek", daysOfWeek: [5], startHour: 18, endHour: 20, versionId: "v_seed" },
+  { id: "cal_christmas", name: "Christmas season", type: "seasonal", seasonalStart: "11-01", seasonalEnd: "12-24", versionId: "v_seed" },
+];
+
 const discounts = [
   {
     id: "disc_summer_sale", name: "Summer Sale", type: "percentOff", value: 15,
     scope: { productGroupId: "pg_hoodies" }, eligibility: { markets: ["DE", "FR"] },
     validFrom: "2026-07-01", validTo: "2026-07-31", stackingGroup: "seasonal", priority: 50, badge: "SALE", versionId: "v_seed",
+  },
+  {
+    id: "disc_weekend_hoodie", name: "Weekend hoodie discount", type: "percentOff", value: 10,
+    scope: { productGroupId: "pg_hoodies" }, eligibility: {}, calendarId: "cal_weekend",
+    stackingGroup: "weekend", priority: 15, badge: "WEEKEND", versionId: "v_seed",
+  },
+  {
+    id: "disc_friday_happy_hour", name: "Friday happy hour -20%", type: "percentOff", value: 20,
+    scope: { productGroupId: "pg_mugs" }, eligibility: {}, calendarId: "cal_friday_happy_hour",
+    stackingGroup: "happy_hour", priority: 25, badge: "HAPPY HOUR", versionId: "v_seed",
+  },
+  // Deliberately shares the "volume" stacking group with the per-line tee
+  // volume-tier discounts (priority 10) at a lower priority (8), so the basket
+  // calculator can show either outcome depending on which one is more specific:
+  // a big order without any single line hitting its own volume tier gets the
+  // basket discount, but a line that already won "volume" on its own excludes it.
+  {
+    id: "disc_basket_value", name: "Order value discount", type: "basketValue",
+    basketTiers: [{ minOrderValue: 500, discountPercent: 5 }, { minOrderValue: 1000, discountPercent: 8 }],
+    scope: {}, eligibility: {}, stackingGroup: "volume", priority: 8, versionId: "v_seed",
+  },
+  {
+    id: "disc_christmas_tshirts", name: "Christmas T-Shirts sale", type: "percentOff", value: 20,
+    scope: { productGroupId: "pg_tshirts" }, eligibility: {}, calendarId: "cal_christmas",
+    stackingGroup: "christmas", priority: 60, badge: "HOLIDAY", versionId: "v_seed",
   },
   {
     id: "disc_volume_tee", name: "Tee volume discount", type: "volumeTier",
@@ -204,6 +236,21 @@ const rules = [
     priority: 50, stackingGroup: "seasonal", versionId: "v_seed",
   },
   {
+    id: "rule_weekend_hoodie", name: "Weekend hoodie discount", scope: { productGroupId: "pg_hoodies" },
+    dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_weekend_hoodie" },
+    priority: 15, stackingGroup: "weekend", calendarId: "cal_weekend", versionId: "v_seed",
+  },
+  {
+    id: "rule_friday_happy_hour", name: "Friday happy hour mugs", scope: { productGroupId: "pg_mugs" },
+    dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_friday_happy_hour" },
+    priority: 25, stackingGroup: "happy_hour", calendarId: "cal_friday_happy_hour", versionId: "v_seed",
+  },
+  {
+    id: "rule_christmas_tshirts", name: "Christmas T-Shirts sale", scope: { productGroupId: "pg_tshirts" },
+    dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_christmas_tshirts" },
+    priority: 60, stackingGroup: "christmas", calendarId: "cal_christmas", versionId: "v_seed",
+  },
+  {
     id: "rule_tee_volume", name: "Tee volume tiers", scope: { productId: "prod_premium_tee" },
     dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_volume_tee" },
     priority: 10, stackingGroup: "volume", versionId: "v_seed",
@@ -241,6 +288,24 @@ const rules = [
   },
 ];
 
+// Composition-based: exactly 1 hoodie + 2 tees for a fixed price (a third tee prices normally).
+const bundles = [
+  {
+    id: "bundle_team_starter", name: "Team starter set", businessUnitId: "bu_apparel",
+    components: [{ skuId: "sku_hoodie_black_m", quantity: 1 }, { skuId: "sku_premium_tee_red_m", quantity: 2 }],
+    bundlePrice: 55, currency: "EUR", eligibility: {}, priority: 10, versionId: "v_seed",
+  },
+];
+
+// Group-based: any 3 tees from the T-Shirts group for a flat price (a 4th tee prices normally).
+const mixAndMatchSets = [
+  {
+    id: "mnm_tee_group", name: "Any 3 Premium Tees for €45", businessUnitId: "bu_apparel",
+    group: { productIds: ["prod_premium_tee"] }, requiredCount: 3, setPrice: 45, currency: "EUR",
+    eligibility: {}, priority: 10, versionId: "v_seed",
+  },
+];
+
 const consistencyRules = [
   { id: "cr_premium_gap", name: "Premium tee ≥ core tee +10%", type: "minGapPercent", subjectRefId: "prod_premium_tee", comparatorRefId: "prod_core_tee", threshold: 10, severity: "blocking" },
   { id: "cr_ch_parity", name: "CH price within ±15% of EU", type: "parityDeviation", subjectRefId: "pg_tshirts", comparatorRefId: "CH", threshold: 15, severity: "warning" },
@@ -268,6 +333,7 @@ const alerts = [];
 const collections = {
   businessUnits, shops, productGroups, products, variants, skus,
   priceOverrides, components, discounts, commissions, rules,
+  pricingCalendars, bundles, mixAndMatchSets,
   consistencyRules, experiments, versions, alerts,
 };
 

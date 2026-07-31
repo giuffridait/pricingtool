@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { newId } from "../store";
-import type { DiscountType, DiscountScope, DiscountEligibility, VolumeTier, BogoConfig } from "../types";
+import type { DiscountType, DiscountScope, DiscountEligibility, VolumeTier, BogoConfig, BasketTier } from "../types";
 import { saveVersioned, deleteVersioned } from "./helpers";
 
 export interface DiscountInput {
@@ -12,10 +12,12 @@ export interface DiscountInput {
   value?: number;
   tiers?: VolumeTier[];
   bogo?: BogoConfig;
+  basketTiers?: BasketTier[];
   scope: DiscountScope;
   eligibility: DiscountEligibility;
   validFrom?: string;
   validTo?: string;
+  calendarId?: string;
   stackingGroup: string;
   priority: number;
   badge?: string;
@@ -33,10 +35,12 @@ export async function saveDiscountAction(input: DiscountInput) {
       value: input.value,
       tiers: input.tiers,
       bogo: input.bogo,
+      basketTiers: input.basketTiers,
       scope: input.scope,
       eligibility: input.eligibility,
       validFrom: input.validFrom || undefined,
       validTo: input.validTo || undefined,
+      calendarId: input.calendarId || undefined,
       stackingGroup: input.stackingGroup,
       priority: input.priority,
       badge: input.badge || undefined,

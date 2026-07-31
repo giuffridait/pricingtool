@@ -1,13 +1,31 @@
 import type { EntityVersion, VersionStatus } from "../types";
-import { versions, priceOverrides, discounts, components, rules, consistencyRules } from "../repo";
+import {
+  versions,
+  priceOverrides,
+  discounts,
+  components,
+  rules,
+  consistencyRules,
+  bundles,
+  mixAndMatchSets,
+  pricingCalendars,
+} from "../repo";
 import { newId } from "../store";
 
 // Draft -> (review) -> approved -> (scheduled) -> active -> reverted workflow,
 // generic across every editable entity type (price overrides, discounts,
-// components, rules, consistency rules). `payload: null` means "delete this
-// entity" when activated.
+// components, rules, consistency rules, bundles, mix-and-match sets, pricing
+// calendars). `payload: null` means "delete this entity" when activated.
 
-export type VersionedEntityType = "priceOverride" | "discount" | "component" | "rule" | "consistencyRule";
+export type VersionedEntityType =
+  | "priceOverride"
+  | "discount"
+  | "component"
+  | "rule"
+  | "consistencyRule"
+  | "bundle"
+  | "mixAndMatchSet"
+  | "pricingCalendar";
 
 const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,6 +38,12 @@ const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>
   rule: (p) => rules.save(p as any),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consistencyRule: (p) => consistencyRules.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bundle: (p) => bundles.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mixAndMatchSet: (p) => mixAndMatchSets.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pricingCalendar: (p) => pricingCalendars.save(p as any),
 };
 
 const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
@@ -28,6 +52,9 @@ const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
   component: components.remove,
   rule: rules.remove,
   consistencyRule: consistencyRules.remove,
+  bundle: bundles.remove,
+  mixAndMatchSet: mixAndMatchSets.remove,
+  pricingCalendar: pricingCalendars.remove,
 };
 
 async function latestActiveVersion(entityType: string, entityId: string): Promise<EntityVersion | undefined> {

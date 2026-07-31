@@ -10,12 +10,16 @@ const PATHS: Record<VersionedEntityType, string> = {
   component: "/components",
   rule: "/rules",
   consistencyRule: "/checks",
+  bundle: "/bundles",
+  mixAndMatchSet: "/bundles",
+  pricingCalendar: "/calendars",
 };
 
 function revalidateFor(entityType: VersionedEntityType) {
   revalidatePath(PATHS[entityType]);
   revalidatePath("/versions");
   revalidatePath("/calculator");
+  revalidatePath("/basket");
   revalidatePath("/overview");
 }
 

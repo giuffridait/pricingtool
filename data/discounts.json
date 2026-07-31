@@ -21,6 +21,71 @@
     "versionId": "v_seed"
   },
   {
+    "id": "disc_weekend_hoodie",
+    "name": "Weekend hoodie discount",
+    "type": "percentOff",
+    "value": 10,
+    "scope": {
+      "productGroupId": "pg_hoodies"
+    },
+    "eligibility": {},
+    "calendarId": "cal_weekend",
+    "stackingGroup": "weekend",
+    "priority": 15,
+    "badge": "WEEKEND",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_friday_happy_hour",
+    "name": "Friday happy hour -20%",
+    "type": "percentOff",
+    "value": 20,
+    "scope": {
+      "productGroupId": "pg_mugs"
+    },
+    "eligibility": {},
+    "calendarId": "cal_friday_happy_hour",
+    "stackingGroup": "happy_hour",
+    "priority": 25,
+    "badge": "HAPPY HOUR",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_basket_value",
+    "name": "Order value discount",
+    "type": "basketValue",
+    "basketTiers": [
+      {
+        "minOrderValue": 500,
+        "discountPercent": 5
+      },
+      {
+        "minOrderValue": 1000,
+        "discountPercent": 8
+      }
+    ],
+    "scope": {},
+    "eligibility": {},
+    "stackingGroup": "volume",
+    "priority": 8,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_christmas_tshirts",
+    "name": "Christmas T-Shirts sale",
+    "type": "percentOff",
+    "value": 20,
+    "scope": {
+      "productGroupId": "pg_tshirts"
+    },
+    "eligibility": {},
+    "calendarId": "cal_christmas",
+    "stackingGroup": "christmas",
+    "priority": 60,
+    "badge": "HOLIDAY",
+    "versionId": "v_seed"
+  },
+  {
     "id": "disc_volume_tee",
     "name": "Tee volume discount",
     "type": "volumeTier",

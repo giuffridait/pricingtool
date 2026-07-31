@@ -1,11 +1,11 @@
-import { rules, discounts, components, commissions, businessUnits, shops } from "@/lib/repo";
+import { rules, discounts, components, commissions, businessUnits, shops, pricingCalendars } from "@/lib/repo";
 import { loadCatalog } from "@/lib/engine/catalog";
 import { PageHeader } from "@/components/ui";
 import RuleEditor from "@/components/RuleEditor";
 import type { ScopeOption } from "@/components/DiscountEditor";
 
 export default async function RulesPage() {
-  const [allRules, allDiscounts, allComponents, allCommissions, bus, allShops, catalog] = await Promise.all([
+  const [allRules, allDiscounts, allComponents, allCommissions, bus, allShops, catalog, calendars] = await Promise.all([
     rules.all(),
     discounts.all(),
     components.all(),
@@ -13,6 +13,7 @@ export default async function RulesPage() {
     businessUnits.all(),
     shops.all(),
     loadCatalog(),
+    pricingCalendars.all(),
   ]);
 
   const scopeOptions: ScopeOption[] = [
@@ -36,6 +37,7 @@ export default async function RulesPage() {
         discounts={allDiscounts}
         components={allComponents}
         commissions={allCommissions}
+        calendars={calendars}
       />
     </div>
   );

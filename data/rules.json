@@ -67,6 +67,54 @@
     "versionId": "v_seed"
   },
   {
+    "id": "rule_weekend_hoodie",
+    "name": "Weekend hoodie discount",
+    "scope": {
+      "productGroupId": "pg_hoodies"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_weekend_hoodie"
+    },
+    "priority": 15,
+    "stackingGroup": "weekend",
+    "calendarId": "cal_weekend",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_friday_happy_hour",
+    "name": "Friday happy hour mugs",
+    "scope": {
+      "productGroupId": "pg_mugs"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_friday_happy_hour"
+    },
+    "priority": 25,
+    "stackingGroup": "happy_hour",
+    "calendarId": "cal_friday_happy_hour",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_christmas_tshirts",
+    "name": "Christmas T-Shirts sale",
+    "scope": {
+      "productGroupId": "pg_tshirts"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_christmas_tshirts"
+    },
+    "priority": 60,
+    "stackingGroup": "christmas",
+    "calendarId": "cal_christmas",
+    "versionId": "v_seed"
+  },
+  {
     "id": "rule_tee_volume",
     "name": "Tee volume tiers",
     "scope": {

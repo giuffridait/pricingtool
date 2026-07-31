@@ -100,12 +100,19 @@ export type DiscountType =
   | "amountOff"
   | "fixedPrice"
   | "volumeTier"
-  | "bogo";
+  | "bogo"
+  | "basketValue";
 
 export interface VolumeTier {
   minQty: number;
   discountPercent?: number;
   fixedPrice?: number;
+}
+
+export interface BasketTier {
+  minOrderValue: number;
+  discountPercent?: number;
+  fixedDiscount?: number;
 }
 
 export interface BogoConfig {
@@ -134,13 +141,77 @@ export interface Discount {
   value?: number; // for percentOff / amountOff / fixedPrice
   tiers?: VolumeTier[]; // for volumeTier
   bogo?: BogoConfig; // for bogo
+  basketTiers?: BasketTier[]; // for basketValue - evaluated against the whole order's value, not one SKU
   scope: DiscountScope;
   eligibility: DiscountEligibility;
   validFrom?: string;
   validTo?: string;
+  calendarId?: ID; // optional recurring pricing calendar gating when this discount is active
   stackingGroup: string;
   priority: number;
   badge?: string;
+  versionId: ID;
+}
+
+// A bundle is composition-based: it fires only when the basket contains at
+// least this exact set of SKUs/quantities, pricing just those matched units
+// at bundlePrice. Any excess quantity beyond the composition prices normally.
+export interface BundleComponent {
+  skuId: ID;
+  quantity: number;
+}
+
+export interface Bundle {
+  id: ID;
+  name: string;
+  businessUnitId: ID;
+  components: BundleComponent[];
+  bundlePrice: number;
+  currency: string;
+  eligibility: DiscountEligibility;
+  validFrom?: string;
+  validTo?: string;
+  priority: number;
+  versionId: ID;
+}
+
+// Mix-and-match is group-based: "any N from this group for €X". The group is
+// either an explicit product list or a whole product group; every complete
+// group of N units in the basket is priced at setPrice, remainder prices normally.
+export interface MixAndMatchGroup {
+  productGroupId?: ID;
+  productIds?: ID[];
+}
+
+export interface MixAndMatchSet {
+  id: ID;
+  name: string;
+  businessUnitId: ID;
+  group: MixAndMatchGroup;
+  requiredCount: number;
+  setPrice: number;
+  currency: string;
+  eligibility: DiscountEligibility;
+  validFrom?: string;
+  validTo?: string;
+  priority: number;
+  versionId: ID;
+}
+
+// Recurring pricing calendar: a discount/rule can reference one instead of
+// (or alongside) a one-off validFrom/validTo window - "every weekend",
+// "Fridays 18-20h", or a yearly seasonal date range.
+export type CalendarType = "dayOfWeek" | "seasonal";
+
+export interface PricingCalendar {
+  id: ID;
+  name: string;
+  type: CalendarType;
+  daysOfWeek?: number[]; // 0=Sunday..6=Saturday, for "dayOfWeek" type
+  startHour?: number; // 0-23 inclusive, optional hour window start (UTC)
+  endHour?: number; // 0-23 exclusive, optional hour window end (UTC)
+  seasonalStart?: string; // "MM-DD", for "seasonal" type
+  seasonalEnd?: string; // "MM-DD"
   versionId: ID;
 }
 
@@ -199,6 +270,7 @@ export interface PricingRule {
   exclusionGroups?: string[]; // stacking groups this rule excludes when active
   validFrom?: string;
   validTo?: string;
+  calendarId?: ID; // optional recurring pricing calendar gating when this rule is active
   versionId: ID;
 }
 
@@ -294,11 +366,23 @@ export interface PricingContext {
   printTechnique?: string;
   personalisation?: string;
   design?: string;
+  // Stacking groups to treat as already "used" (e.g. by a basket-level discount
+  // that outranked a line-level one) - seeds the exclusion set instead of
+  // starting empty. Used by the basket engine for cross-level stacking.
+  excludedStackingGroups?: string[];
 }
 
 export interface ResolutionStep {
   label: string;
   detail: string;
+}
+
+export interface AppliedDiscount {
+  discountId: ID;
+  name: string;
+  stackingGroup: string;
+  priority: number;
+  amount: number; // per-unit average, same convention as finalPrice
 }
 
 export interface ResolvedPrice {
@@ -310,6 +394,7 @@ export interface ResolvedPrice {
   ruleAdjustedPrice: number;
   componentsTotal: number;
   discountTotal: number;
+  appliedDiscounts: AppliedDiscount[];
   finalPrice: number;
   currency: string;
   trace: ResolutionStep[];

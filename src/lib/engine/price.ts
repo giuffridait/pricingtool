@@ -2,13 +2,16 @@ import type {
   PriceComponent,
   PricingRule,
   Discount,
+  PricingCalendar,
   PricingContext,
   ResolvedPrice,
   ResolutionStep,
+  AppliedDiscount,
 } from "../types";
-import { priceOverrides, components, rules, discounts } from "../repo";
+import { priceOverrides, components, rules, discounts, pricingCalendars } from "../repo";
 import { loadCatalog, resolveNode, nodeIds, nodeDimensions } from "./catalog";
 import { matchSpecificity, isWithinValidity } from "./match";
+import { isWithinCalendar } from "./calendar";
 import { scopeSpecificity } from "./scope";
 import { resolveBasePrice } from "./base";
 
@@ -99,8 +102,11 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
 
   // 2. Pricing rules of type setPrice: most specific scope + dimension match, highest priority wins.
   const allRules = await rules.all();
+  const allCalendars = await pricingCalendars.all();
+  const calendarById = new Map<string, PricingCalendar>(allCalendars.map((c) => [c.id, c]));
   const eligibleRules = allRules
     .filter((r) => isWithinValidity(r.validFrom, r.validTo, ctx.date))
+    .filter((r) => isWithinCalendar(r.calendarId ? calendarById.get(r.calendarId) : undefined, ctx.date))
     .map((r) => {
       const scopeScore = scopeSpecificity(r.scope, ids);
       if (scopeScore === null) return null;
@@ -168,6 +174,7 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
       const discount = allDiscounts.find((d) => d.id === m.rule.effect.discountId);
       if (!discount) return null;
       if (!isWithinValidity(discount.validFrom, discount.validTo, ctx.date)) return null;
+      if (!isWithinCalendar(discount.calendarId ? calendarById.get(discount.calendarId) : undefined, ctx.date)) return null;
       if (discount.eligibility.markets && ctx.market && !discount.eligibility.markets.includes(ctx.market)) return null;
       if (
         discount.eligibility.customerGroups &&
@@ -184,8 +191,11 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     .sort((a, b) => b.rule.priority - a.rule.priority);
 
   let discountTotal = 0;
+  const appliedDiscounts: AppliedDiscount[] = [];
   const chosenGroups = new Set<string>();
-  const excludedGroups = new Set<string>();
+  // Seeded by the basket engine when a basket-level discount already won a
+  // stacking group this line's discounts also belong to.
+  const excludedGroups = new Set<string>(ctx.excludedStackingGroups ?? []);
   for (const c of candidates) {
     const group = c.discount.stackingGroup;
     if (excludedGroups.has(group)) {
@@ -198,6 +208,7 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     }
     chosenGroups.add(group);
     discountTotal += c.amount;
+    appliedDiscounts.push({ discountId: c.discount.id, name: c.discount.name, stackingGroup: group, priority: c.rule.priority, amount: c.amount });
     trace.push({
       label: "Discount applied",
       detail: `"${c.discount.name}"${c.discount.badge ? ` [${c.discount.badge}]` : ""} (stacking group "${group}") = -${currency} ${c.amount.toFixed(2)}`,
@@ -226,6 +237,7 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     ruleAdjustedPrice,
     componentsTotal,
     discountTotal,
+    appliedDiscounts,
     finalPrice,
     currency,
     trace,

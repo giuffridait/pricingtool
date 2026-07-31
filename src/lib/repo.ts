@@ -15,6 +15,9 @@ import type {
   EntityVersion,
   Alert,
   Experiment,
+  Bundle,
+  MixAndMatchSet,
+  PricingCalendar,
 } from "./types";
 
 // Thin typed accessors over the generic JSON store. Each function maps 1:1 to a
@@ -95,4 +98,22 @@ export const alerts = {
 export const experiments = {
   all: () => readCollection<Experiment>("experiments"),
   save: (x: Experiment) => upsert("experiments", x),
+};
+
+export const bundles = {
+  all: () => readCollection<Bundle>("bundles"),
+  save: (x: Bundle) => upsert("bundles", x),
+  remove: (id: string) => remove("bundles", id),
+};
+
+export const mixAndMatchSets = {
+  all: () => readCollection<MixAndMatchSet>("mixAndMatchSets"),
+  save: (x: MixAndMatchSet) => upsert("mixAndMatchSets", x),
+  remove: (id: string) => remove("mixAndMatchSets", id),
+};
+
+export const pricingCalendars = {
+  all: () => readCollection<PricingCalendar>("pricingCalendars"),
+  save: (x: PricingCalendar) => upsert("pricingCalendars", x),
+  remove: (id: string) => remove("pricingCalendars", id),
 };
