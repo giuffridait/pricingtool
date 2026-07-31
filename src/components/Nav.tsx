@@ -70,39 +70,70 @@ function isActive(pathname: string | null, href: string) {
   return pathname === href || (pathname?.startsWith(href + "/") ?? false);
 }
 
+// The two collapsed-by-default groups behave as an accordion (opening one
+// closes the other) so the nav's total height stays bounded - without this,
+// groups only ever accumulate open state as you explore, and the sidebar
+// keeps growing until you're scrolling to get back to the top.
+const exclusiveLabels = groups.filter((g) => g.label && !g.defaultOpen).map((g) => g.label!);
+
 export default function Nav() {
   const pathname = usePathname();
   const [openState, setOpenState] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     for (const group of groups) {
       if (!group.label) continue;
-      // Auto-expand a collapsed group if the current page lives inside it,
-      // so deep-linking (or a refresh) never hides where you actually are.
       initial[group.label] = group.defaultOpen || group.links.some((l) => isActive(pathname, l.href));
     }
     return initial;
   });
 
+  // Keep the active page's group open (and, if it's one of the exclusive
+  // groups, close the other one) whenever the route changes client-side.
+  // Adjusting state during render (comparing against a ref-tracked previous
+  // pathname) instead of in an effect avoids an extra render/commit cycle.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    const activeGroup = groups.find((g) => g.label && g.links.some((l) => isActive(pathname, l.href)));
+    if (activeGroup?.label && !openState[activeGroup.label]) {
+      const next = { ...openState, [activeGroup.label]: true };
+      if (exclusiveLabels.includes(activeGroup.label)) {
+        for (const label of exclusiveLabels) {
+          if (label !== activeGroup.label) next[label] = false;
+        }
+      }
+      setOpenState(next);
+    }
+  }
+
   function toggle(label: string) {
-    setOpenState((s) => ({ ...s, [label]: !s[label] }));
+    setOpenState((s) => {
+      const next = { ...s, [label]: !s[label] };
+      if (exclusiveLabels.includes(label) && next[label]) {
+        for (const other of exclusiveLabels) {
+          if (other !== label) next[other] = false;
+        }
+      }
+      return next;
+    });
   }
 
   return (
-    <nav className="w-56 shrink-0 border-r border-black/10 dark:border-white/10 p-4 flex flex-col gap-1 overflow-y-auto">
+    <nav className="w-56 shrink-0 border-r border-black/10 dark:border-white/10 p-4 flex flex-col gap-0.5 overflow-y-auto">
       <div className="font-semibold text-sm px-2 pb-3 tracking-wide text-neutral-500">PRICING TOOL</div>
       {groups.map((group, gi) => (
-        <div key={group.label ?? `ungrouped-${gi}`} className={group.label ? "mt-2" : ""}>
+        <div key={group.label ?? `ungrouped-${gi}`} className={group.label ? "mt-1.5" : ""}>
           {group.label && (
             <button
               onClick={() => toggle(group.label!)}
-              className="w-full flex items-center justify-between px-2 py-1 text-xs font-semibold uppercase tracking-wide text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+              className="w-full flex items-center justify-between px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
             >
               <span>{group.label}</span>
               <span className="text-neutral-400">{openState[group.label] ? "−" : "+"}</span>
             </button>
           )}
           {(!group.label || openState[group.label]) && (
-            <div className="flex flex-col gap-1 mt-0.5">
+            <div className="flex flex-col gap-0.5">
               {group.links.map((link) => {
                 const active = isActive(pathname, link.href);
                 return (
