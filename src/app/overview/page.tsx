@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { shops, priceOverrides, businessUnits } from "@/lib/repo";
 import { loadCatalog } from "@/lib/engine/catalog";
-import { resolveBasePrice } from "@/lib/engine/base";
+import { resolveBasePrice, formatFloorCeiling } from "@/lib/engine/base";
 import { resolvePrice } from "@/lib/engine/price";
 import { generateAlerts } from "@/lib/engine/alerts";
 import { Card, Badge, PageHeader } from "@/components/ui";
@@ -148,7 +148,7 @@ export default async function OverviewPage({
               <th className="p-2">Variant</th>
               <th className="p-2">SKU</th>
               <th className="p-2">Authored base</th>
-              <th className="p-2">Floor / Ceiling</th>
+              <th className="p-2">Guardrail</th>
               <th className="p-2">Resolved (runtime)</th>
             </tr>
           </thead>
@@ -176,10 +176,7 @@ export default async function OverviewPage({
                     <Badge tone="critical">no price</Badge>
                   )}
                 </td>
-                <td className="p-2 text-neutral-500">
-                  {base?.floor !== undefined ? `floor ${base.floor}` : "—"}
-                  {base?.ceiling !== undefined ? ` / ceiling ${base.ceiling}` : ""}
-                </td>
+                <td className="p-2 text-neutral-500">{formatFloorCeiling(base?.floor, base?.ceiling)}</td>
                 <td className="p-2">
                   {resolvedWarning ? (
                     <Badge tone="critical">{resolvedWarning}</Badge>

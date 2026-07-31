@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { businessUnits, shops, priceOverrides } from "@/lib/repo";
 import { loadCatalog } from "@/lib/engine/catalog";
-import { resolveBasePrice } from "@/lib/engine/base";
+import { resolveBasePrice, formatFloorCeiling } from "@/lib/engine/base";
 import { PageHeader, Card, Badge } from "@/components/ui";
 import PriceOverrideEditor from "@/components/PriceOverrideEditor";
 
@@ -20,8 +20,9 @@ function effectiveBadge(
       <Badge tone={resolved.shopSpecific ? "active" : resolved.level === "sku" || resolved.level === "variant" ? "approved" : "draft"}>
         {resolved.shopSpecific ? "shop override" : resolved.level}
       </Badge>
-      {resolved.floor !== undefined && <span className="text-neutral-400 text-xs"> · floor {resolved.floor}</span>}
-      {resolved.ceiling !== undefined && <span className="text-neutral-400 text-xs"> · ceiling {resolved.ceiling}</span>}
+      {(resolved.floor !== undefined || resolved.ceiling !== undefined) && (
+        <span className="text-neutral-400 text-xs"> · {formatFloorCeiling(resolved.floor, resolved.ceiling)}</span>
+      )}
     </span>
   );
 }

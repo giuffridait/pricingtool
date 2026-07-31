@@ -12,6 +12,16 @@ export interface BaseResolution {
   shopSpecific: boolean;
 }
 
+// Most SKUs only ever set a floor (or nothing at all), so a static
+// "Floor / Ceiling" label followed by "floor 15" reads as redundant most of
+// the time. Compact, symbol-based, and only mentions what's actually set.
+export function formatFloorCeiling(floor?: number, ceiling?: number): string {
+  if (floor === undefined && ceiling === undefined) return "—";
+  if (floor !== undefined && ceiling !== undefined) return `≥${floor} · ≤${ceiling}`;
+  if (floor !== undefined) return `≥${floor}`;
+  return `≤${ceiling}`;
+}
+
 // Authored-price resolution only: catalog inheritance + BU/shop overrides,
 // no pricing rules/discounts. This is what price-architecture (consistency)
 // checks reason about, and what SKU pricing screens show as "the base price".
