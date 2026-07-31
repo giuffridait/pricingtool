@@ -12,12 +12,16 @@ const links = [
   { href: "/calendars", label: "Pricing Calendars" },
   { href: "/rules", label: "Rules" },
   { href: "/presentation", label: "Presentation" },
+  { href: "/composer", label: "Final-Price Composer" },
+  { href: "/price-lists", label: "Price Lists" },
   { href: "/calculator", label: "Price Calculator" },
   { href: "/basket", label: "Basket Calculator" },
   { href: "/checks", label: "Consistency & Sanity" },
   { href: "/alerts", label: "Alerts" },
   { href: "/versions", label: "Versions" },
   { href: "/experiments", label: "Experiments" },
+  { href: "/history", label: "Historical Prices" },
+  { href: "/bulk-operations", label: "Bulk Operations" },
 ];
 
 export default function Nav() {

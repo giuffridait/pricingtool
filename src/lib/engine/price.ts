@@ -8,7 +8,7 @@ import type {
   ResolutionStep,
   AppliedDiscount,
 } from "../types";
-import { priceOverrides, components, rules, discounts, pricingCalendars } from "../repo";
+import { priceOverrides, components, rules, discounts, pricingCalendars, priceLists } from "../repo";
 import { loadCatalog, resolveNode, nodeIds, nodeDimensions } from "./catalog";
 import { matchSpecificity, isWithinValidity } from "./match";
 import { isWithinCalendar } from "./calendar";
@@ -92,13 +92,38 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
   if (!resolved) {
     throw new Error(`No price defined anywhere in the catalog chain for SKU ${ctx.skuId} / BU ${ctx.businessUnitId}`);
   }
-  const { price: basePrice, currency, floor, ceiling } = resolved;
+  let { price: basePrice, currency } = resolved;
+  const { floor, ceiling } = resolved;
   trace.push({
     label: "Base price",
     detail: `${currency} ${basePrice.toFixed(2)} from ${node.sku.name} chain, level="${resolved.level}"${
       resolved.shopSpecific ? " (shop-specific override)" : " (BU-wide)"
     }${floor !== undefined ? `, floor=${floor}` : ""}${ceiling !== undefined ? `, ceiling=${ceiling}` : ""}`,
   });
+
+  // 1b. B2B / customer-group price lists: a matching list replaces the
+  // catalog base price outright (highest-priority match wins) before any
+  // rule/discount resolution runs on top.
+  let priceListApplied = false;
+  if (ctx.customerGroup) {
+    const allPriceLists = await priceLists.all();
+    const listMatch = allPriceLists
+      .filter((l) => l.businessUnitId === ctx.businessUnitId)
+      .filter((l) => l.customerGroup === ctx.customerGroup)
+      .filter((l) => isWithinValidity(l.validFrom, l.validTo, ctx.date))
+      .map((l) => ({ list: l, entry: l.entries.find((e) => e.skuId === ctx.skuId) }))
+      .filter((x): x is { list: (typeof allPriceLists)[number]; entry: NonNullable<(typeof x)["entry"]> } => !!x.entry)
+      .sort((a, b) => b.list.priority - a.list.priority)[0];
+    if (listMatch) {
+      basePrice = listMatch.entry.price;
+      currency = listMatch.list.currency;
+      priceListApplied = true;
+      trace.push({
+        label: "Price list",
+        detail: `"${listMatch.list.name}" supplies ${currency} ${basePrice.toFixed(2)} for customer group "${ctx.customerGroup}", replacing the catalog base price.`,
+      });
+    }
+  }
 
   // 2. Pricing rules of type setPrice: most specific scope + dimension match, highest priority wins.
   const allRules = await rules.all();
@@ -118,13 +143,15 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     .sort((a, b) => b.rule.priority - a.rule.priority || b.scopeScore - a.scopeScore || b.dimScore - a.dimScore);
 
   let ruleAdjustedPrice = basePrice;
-  const setPriceMatch = eligibleRules.find((m) => m.rule.effect.type === "setPrice");
+  const setPriceMatch = priceListApplied ? undefined : eligibleRules.find((m) => m.rule.effect.type === "setPrice");
   if (setPriceMatch) {
     ruleAdjustedPrice = setPriceMatch.rule.effect.price ?? basePrice;
     trace.push({
       label: "Pricing rule",
       detail: `"${setPriceMatch.rule.name}" (priority ${setPriceMatch.rule.priority}) replaces base price → ${currency} ${ruleAdjustedPrice.toFixed(2)}`,
     });
+  } else if (priceListApplied) {
+    trace.push({ label: "Pricing rule", detail: "Skipped - a price list already supplied the price for this customer group." });
   } else {
     trace.push({ label: "Pricing rule", detail: "No setPrice rule matched; base price stands." });
   }

@@ -19,6 +19,9 @@ import type {
   MixAndMatchSet,
   PricingCalendar,
   PresentationPolicy,
+  CompositionDefinition,
+  PriceList,
+  HistoricalMetric,
 } from "./types";
 
 // Thin typed accessors over the generic JSON store. Each function maps 1:1 to a
@@ -123,4 +126,21 @@ export const presentationPolicies = {
   all: () => readCollection<PresentationPolicy>("presentationPolicies"),
   save: (x: PresentationPolicy) => upsert("presentationPolicies", x),
   remove: (id: string) => remove("presentationPolicies", id),
+};
+
+export const compositionDefinitions = {
+  all: () => readCollection<CompositionDefinition>("compositionDefinitions"),
+  save: (x: CompositionDefinition) => upsert("compositionDefinitions", x),
+  remove: (id: string) => remove("compositionDefinitions", id),
+};
+
+export const priceLists = {
+  all: () => readCollection<PriceList>("priceLists"),
+  save: (x: PriceList) => upsert("priceLists", x),
+  remove: (id: string) => remove("priceLists", id),
+};
+
+// Read-only analytics - no save/remove, no version workflow.
+export const historicalMetrics = {
+  all: () => readCollection<HistoricalMetric>("historicalMetrics"),
 };

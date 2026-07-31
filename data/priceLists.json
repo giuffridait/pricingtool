@@ -1,0 +1,21 @@
+[
+  {
+    "id": "plist_wholesale",
+    "name": "Wholesale partners",
+    "businessUnitId": "bu_apparel",
+    "customerGroup": "wholesale-partner",
+    "currency": "EUR",
+    "priority": 50,
+    "entries": [
+      {
+        "skuId": "sku_premium_tee_red_m",
+        "price": 14
+      },
+      {
+        "skuId": "sku_hoodie_black_m",
+        "price": 20
+      }
+    ],
+    "versionId": "v_seed"
+  }
+]

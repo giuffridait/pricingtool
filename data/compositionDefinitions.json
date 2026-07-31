@@ -1,0 +1,51 @@
+[
+  {
+    "id": "cd_apparel_default",
+    "name": "Apparel default composition",
+    "businessUnitId": "bu_apparel",
+    "steps": [
+      {
+        "type": "basePrice",
+        "included": true,
+        "calcMode": "additive"
+      },
+      {
+        "type": "configComponents",
+        "included": true,
+        "calcMode": "additive"
+      },
+      {
+        "type": "discounts",
+        "included": true,
+        "calcMode": "additive"
+      },
+      {
+        "type": "commissions",
+        "included": false,
+        "calcMode": "percentOfSubtotal"
+      },
+      {
+        "type": "markup",
+        "included": false,
+        "calcMode": "percentOfSubtotal"
+      },
+      {
+        "type": "tax",
+        "included": true,
+        "calcMode": "percentOfSubtotal",
+        "taxInclusive": true
+      },
+      {
+        "type": "shipping",
+        "included": false,
+        "calcMode": "additive"
+      },
+      {
+        "type": "fees",
+        "included": false,
+        "calcMode": "additive"
+      }
+    ],
+    "versionId": "v_seed"
+  }
+]

@@ -322,6 +322,37 @@ const presentationPolicies = [
   },
 ];
 
+// Final-price composer: authored composition intent per BU (documentation only in this prototype - see CompositionDefinitionEditor).
+const compositionDefinitions = [
+  {
+    id: "cd_apparel_default", name: "Apparel default composition", businessUnitId: "bu_apparel",
+    steps: [
+      { type: "basePrice", included: true, calcMode: "additive" },
+      { type: "configComponents", included: true, calcMode: "additive" },
+      { type: "discounts", included: true, calcMode: "additive" },
+      { type: "commissions", included: false, calcMode: "percentOfSubtotal" },
+      { type: "markup", included: false, calcMode: "percentOfSubtotal" },
+      { type: "tax", included: true, calcMode: "percentOfSubtotal", taxInclusive: true },
+      { type: "shipping", included: false, calcMode: "additive" },
+      { type: "fees", included: false, calcMode: "additive" },
+    ],
+    versionId: "v_seed",
+  },
+];
+
+// B2B / customer-group price lists: replacement prices for a named customer group, ranked by priority vs. standard pricing.
+const priceLists = [
+  {
+    id: "plist_wholesale", name: "Wholesale partners", businessUnitId: "bu_apparel", customerGroup: "wholesale-partner",
+    currency: "EUR", priority: 50,
+    entries: [
+      { skuId: "sku_premium_tee_red_m", price: 14 },
+      { skuId: "sku_hoodie_black_m", price: 20 },
+    ],
+    versionId: "v_seed",
+  },
+];
+
 const consistencyRules = [
   { id: "cr_premium_gap", name: "Premium tee ≥ core tee +10%", type: "minGapPercent", subjectRefId: "prod_premium_tee", comparatorRefId: "prod_core_tee", threshold: 10, severity: "blocking" },
   { id: "cr_ch_parity", name: "CH price within ±15% of EU", type: "parityDeviation", subjectRefId: "pg_tshirts", comparatorRefId: "CH", threshold: 15, severity: "warning" },
@@ -346,10 +377,42 @@ const versions = [
 
 const alerts = [];
 
+// Synthetic historical analytics (last 6 months per SKU) - this prototype has
+// no real order history, so numbers are generated deterministically from a
+// seeded hash rather than pulled from a live system.
+function seededRandom(seedStr) {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = (h * 31 + seedStr.charCodeAt(i)) >>> 0;
+  return () => {
+    h = (Math.imul(h, 1103515245) + 12345) >>> 0;
+    return h / 0xffffffff;
+  };
+}
+
+const HISTORY_MONTHS = ["2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07"];
+
+const historicalMetrics = skus.flatMap((sku) => {
+  const assumedPrice = Math.round(sku.costBasis * 2.2 * 100) / 100;
+  const rand = seededRandom(sku.id);
+  return HISTORY_MONTHS.map((month) => {
+    const priceVariance = 0.95 + rand() * 0.1;
+    const price = Math.round(assumedPrice * priceVariance * 100) / 100;
+    const units = Math.round(20 + rand() * 280);
+    const discountRate = Math.round(rand() * 20 * 10) / 10;
+    const revenue = Math.round(units * price * (1 - discountRate / 100) * 100) / 100;
+    const margin = Math.round(((price - sku.costBasis) / price) * 100 * 10) / 10;
+    const contribution = Math.round(revenue * (margin / 100) * 100) / 100;
+    const returns = Math.round(units * rand() * 0.08);
+    const commissions = Math.round(revenue * 0.05 * 100) / 100;
+    return { skuId: sku.id, month, currency: "EUR", price, units, revenue, discountRate, contribution, margin, returns, commissions };
+  });
+});
+
 const collections = {
   businessUnits, shops, productGroups, products, variants, skus,
   priceOverrides, components, discounts, commissions, rules,
   pricingCalendars, bundles, mixAndMatchSets, presentationPolicies,
+  compositionDefinitions, priceLists, historicalMetrics,
   consistencyRules, experiments, versions, alerts,
 };
 

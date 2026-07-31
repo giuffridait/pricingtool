@@ -10,14 +10,16 @@ import {
   mixAndMatchSets,
   pricingCalendars,
   presentationPolicies,
+  compositionDefinitions,
+  priceLists,
 } from "../repo";
 import { newId } from "../store";
 
 // Draft -> (review) -> approved -> (scheduled) -> active -> reverted workflow,
 // generic across every editable entity type (price overrides, discounts,
 // components, rules, consistency rules, bundles, mix-and-match sets, pricing
-// calendars, presentation policies). `payload: null` means "delete this
-// entity" when activated.
+// calendars, presentation policies, composition definitions, price lists).
+// `payload: null` means "delete this entity" when activated.
 
 export type VersionedEntityType =
   | "priceOverride"
@@ -28,7 +30,9 @@ export type VersionedEntityType =
   | "bundle"
   | "mixAndMatchSet"
   | "pricingCalendar"
-  | "presentationPolicy";
+  | "presentationPolicy"
+  | "compositionDefinition"
+  | "priceList";
 
 const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,6 +53,10 @@ const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>
   pricingCalendar: (p) => pricingCalendars.save(p as any),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   presentationPolicy: (p) => presentationPolicies.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  compositionDefinition: (p) => compositionDefinitions.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  priceList: (p) => priceLists.save(p as any),
 };
 
 const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
@@ -61,6 +69,8 @@ const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
   mixAndMatchSet: mixAndMatchSets.remove,
   pricingCalendar: pricingCalendars.remove,
   presentationPolicy: presentationPolicies.remove,
+  compositionDefinition: compositionDefinitions.remove,
+  priceList: priceLists.remove,
 };
 
 async function latestActiveVersion(entityType: string, entityId: string): Promise<EntityVersion | undefined> {

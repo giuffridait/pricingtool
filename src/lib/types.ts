@@ -236,6 +236,61 @@ export interface PresentationPolicy {
   versionId: ID;
 }
 
+// Final-price composer: the *intended* order and semantics for how a final
+// price is composed from typed components, authored per BU/shop. This is a
+// configuration surface only in this prototype - the engine already computes
+// base price + configuration components + discounts in a fixed, equivalent
+// order; commissions/markup/tax/shipping/fees aren't wired into a live
+// calculation here. Authoring this doesn't change what resolvePrice charges.
+export type CompositionStepType =
+  | "basePrice"
+  | "configComponents"
+  | "discounts"
+  | "commissions"
+  | "markup"
+  | "tax"
+  | "shipping"
+  | "fees";
+
+export type CompositionCalcMode = "additive" | "percentOfSubtotal";
+
+export interface CompositionStep {
+  type: CompositionStepType;
+  included: boolean;
+  calcMode: CompositionCalcMode;
+  taxInclusive?: boolean; // only meaningful when type === "tax"
+}
+
+export interface CompositionDefinition {
+  id: ID;
+  name: string;
+  businessUnitId: ID;
+  shopId?: ID;
+  steps: CompositionStep[]; // authored order
+  versionId: ID;
+}
+
+// B2B / customer-group price lists: a named, reusable set of replacement
+// prices for a customer group, with its own validity/priority vs. standard
+// (catalog) pricing.
+export interface PriceListEntry {
+  skuId: ID;
+  price: number;
+}
+
+export interface PriceList {
+  id: ID;
+  name: string;
+  businessUnitId: ID;
+  customerGroup: string;
+  currency: string;
+  validFrom?: string;
+  validTo?: string;
+  priority: number;
+  entries: PriceListEntry[];
+  versionId: ID;
+}
+
 export type CommissionType = "designer" | "creator" | "partner";
 export type CommissionCalc = "percentOfPremium" | "fixedPerItem" | "tieredPercent";
 
@@ -421,4 +476,20 @@ export interface ResolvedPrice {
   currency: string;
   trace: ResolutionStep[];
   warnings: string[];
+}
+
+// Read-only historical analytics - synthetic seeded data in this prototype,
+// standing in for what would otherwise come from an orders/BI system.
+export interface HistoricalMetric {
+  skuId: ID;
+  month: string; // "YYYY-MM"
+  currency: string;
+  price: number;
+  units: number;
+  revenue: number;
+  discountRate: number; // percent
+  contribution: number; // revenue * margin
+  margin: number; // percent
+  returns: number; // units returned
+  commissions: number;
 }
