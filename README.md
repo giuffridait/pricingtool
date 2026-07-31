@@ -66,9 +66,42 @@ external Payout System.
 
 ## Stack
 
-Next.js (App Router) + TypeScript + Tailwind, with a flat JSON-file
-"database" under `data/*.json` (no external DB needed for this prototype).
-Server Actions handle all mutations.
+Next.js (App Router) + TypeScript + Tailwind. Storage (`src/lib/store.ts`)
+has two backends behind one interface:
+
+- **No database configured** (the default locally) — a flat JSON-file store
+  under `data/*.json`, read/written whole per collection.
+- **`DATABASE_URL` or `POSTGRES_URL` set** — a Postgres table
+  (`collections(name, data jsonb)`), one row per collection, created
+  automatically on first use. This is what makes edits persist on a real
+  deploy instead of resetting on every cold start.
+
+Server Actions handle all mutations either way - nothing above `store.ts`
+needs to know which backend is active.
+
+## Deploying to Vercel
+
+The app deploys as a normal Next.js project - import the repo at
+[vercel.com/new](https://vercel.com/new), no build config changes needed.
+
+Two things worth knowing:
+
+- **Vercel's serverless filesystem is read-only** outside `/tmp`. Without a
+  database connected, `store.ts` automatically redirects writes to `/tmp`
+  instead of throwing - but `/tmp` is wiped on cold start and isn't shared
+  across instances, so this is a "click around and try it" demo, not
+  somewhere to actually manage prices.
+- **For real persistence**, add a Postgres database from the Vercel
+  dashboard (Storage tab → Create Database; Vercel's Postgres offering is
+  Neon-backed) and connect it to the project. Vercel injects the connection
+  string as an env var automatically - `store.ts` picks up either
+  `DATABASE_URL` or `POSTGRES_URL`, whichever your integration sets. Redeploy
+  and edits will actually stick. No manual migration needed - the
+  `collections` table is created on first query.
+
+Locally, nothing changes unless you explicitly set `DATABASE_URL`/
+`POSTGRES_URL` in `.env.local` - by default local dev always uses the
+JSON files under `data/`.
 
 ## Getting started
 
