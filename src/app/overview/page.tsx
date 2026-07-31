@@ -99,7 +99,7 @@ export default async function OverviewPage({
 
       <form className="flex items-center gap-2 mb-4 text-sm">
         <label htmlFor="shop" className="text-neutral-500">Shop / market context:</label>
-        <select id="shop" name="shop" defaultValue={shopFilter ?? ""} className="border border-black/10 dark:border-white/10 rounded px-2 py-1 bg-transparent">
+        <select id="shop" name="shop" defaultValue={shopFilter ?? ""} className="border border-black/25 dark:border-white/25 rounded px-2 py-1 bg-white dark:bg-neutral-900">
           <option value="">BU-wide default (no shop)</option>
           {bus.map((bu) => (
             <optgroup key={bu.id} label={bu.name}>
@@ -119,9 +119,9 @@ export default async function OverviewPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+      <div className="overflow-x-auto rounded-lg border border-black/20 dark:border-white/20">
         <table className="w-full text-sm">
-          <thead className="bg-black/5 dark:bg-white/5 text-left">
+          <thead className="bg-neutral-100 dark:bg-white/10 text-left">
             <tr>
               <th className="p-2">BU</th>
               <th className="p-2">Product group</th>
@@ -135,7 +135,7 @@ export default async function OverviewPage({
           </thead>
           <tbody>
             {rows.map(({ sku, variant, product, productGroup, base, resolvedPrice, resolvedWarning }) => (
-              <tr key={sku.id} className="border-t border-black/5 dark:border-white/5">
+              <tr key={sku.id} className="border-t border-black/10 dark:border-white/10">
                 <td className="p-2 text-neutral-500 text-xs">{bus.find((b) => b.id === productGroup.businessUnitId)?.name}</td>
                 <td className="p-2">{productGroup.name}</td>
                 <td className="p-2">{product.name}</td>

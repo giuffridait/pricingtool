@@ -67,7 +67,7 @@ export default async function CatalogPage({
           name="q"
           defaultValue={rawQuery ?? ""}
           placeholder="Search product group, product, variant, or SKU…"
-          className="border border-black/10 dark:border-white/10 rounded px-3 py-1.5 text-sm bg-transparent w-full max-w-md"
+          className="border border-black/25 dark:border-white/25 rounded px-3 py-1.5 text-sm bg-white dark:bg-neutral-900 w-full max-w-md"
         />
       </form>
 
@@ -113,7 +113,7 @@ export default async function CatalogPage({
                       const variantIds = [...new Set(productRows.map((r) => r.variant.id))];
 
                       return (
-                        <details key={product.id} open={searching} className="rounded border border-black/5 dark:border-white/5 p-2">
+                        <details key={product.id} open={searching} className="rounded border border-black/15 dark:border-white/15 p-2">
                           <summary className="cursor-pointer flex items-center justify-between flex-wrap gap-2 list-none">
                             <span>
                               {product.name} <span className="text-xs text-neutral-400">({product.productType})</span>
@@ -139,7 +139,7 @@ export default async function CatalogPage({
                                 const variantIds4 = { productGroupId: productGroup.id, productId: product.id, variantId: variant.id, skuId: "" };
                                 return (
                                   <Fragment key={variant.id}>
-                                    <tr className="border-t border-black/5 dark:border-white/5">
+                                    <tr className="border-t border-black/10 dark:border-white/10">
                                       <td className="py-1.5 pr-2 font-medium">
                                         {variant.name} <span className="text-xs text-neutral-400">({variant.appearance})</span>
                                       </td>
@@ -157,7 +157,7 @@ export default async function CatalogPage({
                                     {variantSkuRows.map(({ sku }) => {
                                       const skuIds4 = { productGroupId: productGroup.id, productId: product.id, variantId: variant.id, skuId: sku.id };
                                       return (
-                                        <tr key={sku.id} className="border-t border-black/5 dark:border-white/5 text-neutral-600 dark:text-neutral-400">
+                                        <tr key={sku.id} className="border-t border-black/10 dark:border-white/10 text-neutral-600 dark:text-neutral-400">
                                           <td className="py-1.5 pr-2 pl-4">
                                             {sku.name} <span className="text-xs text-neutral-400">· cost {sku.costBasis.toFixed(2)}</span>
                                           </td>

@@ -1,18 +1,49 @@
-import type { ReactNode } from "react";
+import type { ReactNode, ButtonHTMLAttributes } from "react";
 import Link from "next/link";
 import { WORKFLOW } from "@/lib/workflow";
 
 export function Card({ title, action, children }: { title?: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] p-4">
+    <div className="rounded-lg border border-black/15 dark:border-white/15 bg-white dark:bg-neutral-900 shadow-sm p-4">
       {(title || action) && (
         <div className="flex items-center justify-between mb-3">
-          {title && <h2 className="font-medium text-sm text-neutral-600 dark:text-neutral-300">{title}</h2>}
+          {title && <h2 className="font-medium text-sm text-neutral-700 dark:text-neutral-200">{title}</h2>}
           {action}
         </div>
       )}
       {children}
     </div>
+  );
+}
+
+const buttonVariants: Record<string, string> = {
+  primary: "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border border-transparent hover:opacity-90",
+  secondary:
+    "bg-neutral-100 dark:bg-white/10 text-neutral-800 dark:text-neutral-100 border border-black/15 dark:border-white/20 hover:bg-neutral-200 dark:hover:bg-white/15",
+  danger:
+    "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900 hover:bg-red-100 dark:hover:bg-red-900",
+};
+
+export function Button({
+  children,
+  variant = "secondary",
+  size = "sm",
+  className = "",
+  ...props
+}: {
+  children: ReactNode;
+  variant?: "primary" | "secondary" | "danger";
+  size?: "sm" | "md";
+  className?: string;
+} & ButtonHTMLAttributes<HTMLButtonElement>) {
+  const sizeClasses = size === "md" ? "px-3 py-1.5 text-sm" : "px-2 py-1 text-xs";
+  return (
+    <button
+      className={`rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${sizeClasses} ${buttonVariants[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
 
