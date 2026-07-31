@@ -11,58 +11,69 @@ export default function PriceOverrideEditor({
   businessUnits,
   shops,
   overrides,
+  defaultOpen = false,
 }: {
   level: CatalogLevel;
   refId: string;
   businessUnits: BusinessUnit[];
   shops: Shop[];
   overrides: PriceOverride[];
+  defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   return (
     <div className="space-y-1">
-      {overrides.map((o) => (
-        <div key={o.id} className="flex items-center gap-2 text-xs">
-          {editingId === o.id ? (
-            <OverrideForm
-              level={level}
-              refId={refId}
-              businessUnits={businessUnits}
-              shops={shops}
-              initial={o}
-              onDone={() => setEditingId(null)}
-            />
+      <button className="text-xs underline text-neutral-500" onClick={() => setOpen(!open)}>
+        {open ? "hide overrides" : overrides.length > 0 ? `manage (${overrides.length} override${overrides.length > 1 ? "s" : ""})` : "manage overrides"}
+      </button>
+      {open && (
+        <div className="space-y-1 pl-2 border-l border-black/10 dark:border-white/10">
+          {overrides.length === 0 && <div className="text-xs text-neutral-400 italic">No overrides at this level — inheriting from parent.</div>}
+          {overrides.map((o) => (
+            <div key={o.id} className="flex items-center gap-2 text-xs">
+              {editingId === o.id ? (
+                <OverrideForm
+                  level={level}
+                  refId={refId}
+                  businessUnits={businessUnits}
+                  shops={shops}
+                  initial={o}
+                  onDone={() => setEditingId(null)}
+                />
+              ) : (
+                <>
+                  <Badge tone={o.shopId ? "active" : "draft"}>{o.shopId ? shops.find((s) => s.id === o.shopId)?.name : "BU-wide"}</Badge>
+                  <span>
+                    {o.currency} {o.price.toFixed(2)}
+                    {o.floor !== undefined ? ` · floor ${o.floor}` : ""}
+                    {o.ceiling !== undefined ? ` · ceiling ${o.ceiling}` : ""}
+                  </span>
+                  <button className="underline text-neutral-500" onClick={() => setEditingId(o.id)}>
+                    edit
+                  </button>
+                  <button
+                    disabled={pending}
+                    className="underline text-red-600"
+                    onClick={() => startTransition(() => deletePriceOverrideAction(o.id))}
+                  >
+                    delete
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
+          {adding ? (
+            <OverrideForm level={level} refId={refId} businessUnits={businessUnits} shops={shops} onDone={() => setAdding(false)} />
           ) : (
-            <>
-              <Badge tone={o.shopId ? "active" : "draft"}>{o.shopId ? shops.find((s) => s.id === o.shopId)?.name : "BU-wide"}</Badge>
-              <span>
-                {o.currency} {o.price.toFixed(2)}
-                {o.floor !== undefined ? ` · floor ${o.floor}` : ""}
-                {o.ceiling !== undefined ? ` · ceiling ${o.ceiling}` : ""}
-              </span>
-              <button className="underline text-neutral-500" onClick={() => setEditingId(o.id)}>
-                edit
-              </button>
-              <button
-                disabled={pending}
-                className="underline text-red-600"
-                onClick={() => startTransition(() => deletePriceOverrideAction(o.id))}
-              >
-                delete
-              </button>
-            </>
+            <button className="text-xs underline text-neutral-500" onClick={() => setAdding(true)}>
+              + Add override
+            </button>
           )}
         </div>
-      ))}
-      {adding ? (
-        <OverrideForm level={level} refId={refId} businessUnits={businessUnits} shops={shops} onDone={() => setAdding(false)} />
-      ) : (
-        <button className="text-xs underline text-neutral-500" onClick={() => setAdding(true)}>
-          + Add override
-        </button>
       )}
     </div>
   );
