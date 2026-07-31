@@ -5,7 +5,7 @@ import DiscountEditor, { type ScopeOption } from "@/components/DiscountEditor";
 import BundleEditor from "@/components/BundleEditor";
 import MixAndMatchEditor from "@/components/MixAndMatchEditor";
 
-export default async function DiscountsPage() {
+export default async function IncentivesPage() {
   const [all, catalog, calendars, allBundles, allSets, bus] = await Promise.all([
     discounts.all(),
     loadCatalog(),
@@ -30,8 +30,8 @@ export default async function DiscountsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Discounts, bundles & mix-and-match"
-        description="Every promotional mechanism a shopper experiences as 'a deal' lives here. Discounts (coupons, volume tiers, BOGO, basket-value) are reusable entities sharing one model - mechanism/type, value, scope, eligibility, validity, stacking group, priority, badge - matched to a request via a pricing rule (see Rules). Bundles and mix-and-match work differently under the hood (they match a combination of SKUs across the whole basket rather than discounting one line), but they're grouped here because they're the same kind of thing to whoever's setting up a promotion."
+        title="Discounts & incentives"
+        description="Every promotional mechanism a shopper experiences as 'a deal' lives here - discounts, bundles, and mix-and-match today, with room to grow into loyalty rewards, referral credits, and similar mechanics. Discounts (coupons, volume tiers, BOGO, basket-value) are reusable entities sharing one model - mechanism/type, value, scope, eligibility, validity, stacking group, priority, badge - matched to a request via a pricing rule (see Rules). Bundles and mix-and-match work differently under the hood (they match a combination of SKUs across the whole basket rather than discounting one line), but they're grouped here because they're the same kind of thing to whoever's setting up a promotion."
       />
       <DiscountEditor discounts={all} scopeOptions={scopeOptions} calendars={calendars} />
       <BundleEditor bundles={allBundles} skuOptions={skuOptions} businessUnits={bus} />

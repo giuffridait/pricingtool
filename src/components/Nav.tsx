@@ -30,7 +30,7 @@ const groups: NavGroup[] = [
     defaultOpen: true,
     links: [
       { href: "/catalog", label: "Catalog & Pricing" },
-      { href: "/discounts", label: "Discounts & Bundles" },
+      { href: "/incentives", label: "Discounts & Incentives" },
       { href: "/calculator", label: "Price Calculator" },
     ],
   },

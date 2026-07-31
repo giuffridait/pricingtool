@@ -48,12 +48,12 @@ export async function saveDiscountAction(input: DiscountInput) {
     }),
     { note: `Saved discount "${input.name}"` },
   );
-  revalidatePath("/discounts");
+  revalidatePath("/incentives");
   revalidatePath("/calculator");
 }
 
 export async function deleteDiscountAction(id: string) {
   await deleteVersioned("discount", id, "Removed discount");
-  revalidatePath("/discounts");
+  revalidatePath("/incentives");
   revalidatePath("/calculator");
 }

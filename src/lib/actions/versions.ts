@@ -6,12 +6,12 @@ import type { VersionedEntityType } from "../engine/versions";
 
 const PATHS: Record<VersionedEntityType, string> = {
   priceOverride: "/catalog",
-  discount: "/discounts",
+  discount: "/incentives",
   component: "/components",
   rule: "/rules",
   consistencyRule: "/checks",
-  bundle: "/discounts",
-  mixAndMatchSet: "/discounts",
+  bundle: "/incentives",
+  mixAndMatchSet: "/incentives",
   pricingCalendar: "/calendars",
   presentationPolicy: "/presentation",
   compositionDefinition: "/composer",

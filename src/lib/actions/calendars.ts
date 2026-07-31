@@ -35,7 +35,7 @@ export async function saveCalendarAction(input: CalendarInput) {
     { note: `Saved pricing calendar "${input.name}"` },
   );
   revalidatePath("/calendars");
-  revalidatePath("/discounts");
+  revalidatePath("/incentives");
   revalidatePath("/rules");
   revalidatePath("/calculator");
   revalidatePath("/basket");
