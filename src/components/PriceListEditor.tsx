@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import type { PriceList, PriceListEntry, BusinessUnit } from "@/lib/types";
 import { savePriceListAction, deletePriceListAction } from "@/lib/actions/priceLists";
 import { Badge, Card } from "@/components/ui";
-import type { SkuOption } from "@/components/CalculatorForm";
+import type { SkuOption } from "@/components/PriceCalculatorForm";
 
 export default function PriceListEditor({
   priceLists,

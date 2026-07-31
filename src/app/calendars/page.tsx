@@ -7,7 +7,7 @@ export default async function CalendarsPage() {
   return (
     <div>
       <PageHeader
-        title="Time-based pricing (recurring calendars)"
+        title="Sales calendar"
         description="Recurring pricing windows - every weekend, Friday happy hour, or a yearly seasonal date range - that a discount or rule can reference instead of (or alongside) a one-off validity window. Attach a calendar to a discount on the Discounts page, or to a rule on the Rules page."
       />
       <CalendarEditor calendars={calendars} />

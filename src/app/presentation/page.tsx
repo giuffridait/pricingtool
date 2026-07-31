@@ -22,7 +22,7 @@ export default async function PresentationPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Customer-facing price & discount presentation"
+        title="Storefront display"
         description="Presentation is configured separately from the paid price: RRP strikethrough, discount badges, psychological rounding, and savings messaging. A policy controls how a resolved price gets displayed - it never changes what's actually charged."
       />
       <PresentationPolicyEditor policies={policies} businessUnits={bus} shops={allShops} />

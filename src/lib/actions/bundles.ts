@@ -39,11 +39,11 @@ export async function saveBundleAction(input: BundleInput) {
     { note: `Saved bundle "${input.name}"` },
   );
   revalidatePath("/incentives");
-  revalidatePath("/basket");
+  revalidatePath("/calculator");
 }
 
 export async function deleteBundleAction(id: string) {
   await deleteVersioned("bundle", id, "Removed bundle");
   revalidatePath("/incentives");
-  revalidatePath("/basket");
+  revalidatePath("/calculator");
 }

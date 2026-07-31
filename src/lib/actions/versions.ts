@@ -22,7 +22,6 @@ function revalidateFor(entityType: VersionedEntityType) {
   revalidatePath(PATHS[entityType]);
   revalidatePath("/versions");
   revalidatePath("/calculator");
-  revalidatePath("/basket");
   revalidatePath("/overview");
 }
 

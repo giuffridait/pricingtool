@@ -1,7 +1,7 @@
 import { businessUnits, shops } from "@/lib/repo";
 import { loadCatalog } from "@/lib/engine/catalog";
 import { PageHeader } from "@/components/ui";
-import CalculatorForm from "@/components/CalculatorForm";
+import PriceCalculatorForm from "@/components/PriceCalculatorForm";
 
 export default async function CalculatorPage({
   searchParams,
@@ -20,10 +20,10 @@ export default async function CalculatorPage({
   return (
     <div>
       <PageHeader
-        title="Price calculator"
+        title="Price & basket calculator"
         description="Runs a live pricing request through the resolution engine and shows the full trace: which base price/override was used, which rule replaced it, which components and discounts applied (and which were excluded by stacking rules), and any floor/ceiling safeguard."
       />
-      <CalculatorForm skuOptions={skuOptions} businessUnits={bus} shops={allShops} initialSkuId={skuId} />
+      <PriceCalculatorForm skuOptions={skuOptions} businessUnits={bus} shops={allShops} initialSkuId={skuId} />
     </div>
   );
 }

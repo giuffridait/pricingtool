@@ -38,7 +38,6 @@ export async function saveCalendarAction(input: CalendarInput) {
   revalidatePath("/incentives");
   revalidatePath("/rules");
   revalidatePath("/calculator");
-  revalidatePath("/basket");
 }
 
 export async function deleteCalendarAction(id: string) {

@@ -7,7 +7,7 @@ import { previewFromPriceAction } from "@/lib/actions/presentation";
 import type { PresentationResult } from "@/lib/engine/presentation";
 import { Card, Badge } from "@/components/ui";
 import PresentationTile from "@/components/PresentationTile";
-import type { SkuOption } from "@/components/CalculatorForm";
+import type { SkuOption } from "@/components/PriceCalculatorForm";
 
 export interface ProductOption {
   id: string;

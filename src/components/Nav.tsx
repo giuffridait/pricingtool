@@ -16,7 +16,7 @@ interface NavGroup {
 }
 
 // Grouped so a newbie running a small store sees a short, obvious list by
-// default (Essentials + Merchandising), while everything a power user needs
+// default (Essentials + Storefront), while everything a power user needs
 // is one click away behind two labeled, collapsed sections - never removed,
 // just not shoved in their face on day one.
 const groups: NavGroup[] = [
@@ -35,12 +35,11 @@ const groups: NavGroup[] = [
     ],
   },
   {
-    label: "Merchandising",
+    label: "Storefront",
     defaultOpen: true,
     links: [
-      { href: "/calendars", label: "Pricing Calendars" },
-      { href: "/presentation", label: "Presentation" },
-      { href: "/basket", label: "Basket Calculator" },
+      { href: "/calendars", label: "Sales Calendar" },
+      { href: "/presentation", label: "Storefront Display" },
     ],
   },
   {

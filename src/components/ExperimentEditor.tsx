@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import type { Experiment, BusinessUnit } from "@/lib/types";
 import { saveExperimentAction, setExperimentStatusAction } from "@/lib/actions/experiments";
 import { Badge, Card } from "@/components/ui";
-import type { SkuOption } from "@/components/CalculatorForm";
+import type { SkuOption } from "@/components/PriceCalculatorForm";
 
 export default function ExperimentEditor({
   experiments,

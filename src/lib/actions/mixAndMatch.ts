@@ -41,11 +41,11 @@ export async function saveMixAndMatchAction(input: MixAndMatchInput) {
     { note: `Saved mix-and-match set "${input.name}"` },
   );
   revalidatePath("/incentives");
-  revalidatePath("/basket");
+  revalidatePath("/calculator");
 }
 
 export async function deleteMixAndMatchAction(id: string) {
   await deleteVersioned("mixAndMatchSet", id, "Removed mix-and-match set");
   revalidatePath("/incentives");
-  revalidatePath("/basket");
+  revalidatePath("/calculator");
 }

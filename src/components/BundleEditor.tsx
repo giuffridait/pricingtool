@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import type { Bundle, BundleComponent, BusinessUnit } from "@/lib/types";
 import { saveBundleAction, deleteBundleAction } from "@/lib/actions/bundles";
 import { Badge, Card } from "@/components/ui";
-import type { SkuOption } from "@/components/CalculatorForm";
+import type { SkuOption } from "@/components/PriceCalculatorForm";
 
 export default function BundleEditor({
   bundles,
