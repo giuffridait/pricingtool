@@ -28,6 +28,7 @@ export default async function RulesPage() {
       <PageHeader
         title="Pricing rule model & resolution policies"
         description="Rules decide which price/component/discount/commission effect applies to a given request at runtime. Matching is by catalog scope + dimensions (BU, shop, market, channel, customer group, ...); the highest-priority, most-specific match wins. Use the Price Calculator to see the full resolution trace for a given SKU/context."
+        path="/rules"
       />
       <RuleEditor
         rules={allRules}

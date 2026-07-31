@@ -41,6 +41,7 @@ export default async function ChecksPage() {
       <PageHeader
         title="Consistency & sanity checks"
         description="Consistency rules validate intended price relationships (gaps, ordering, parity) at save/activation time - they never select a runtime price. Cross-SKU sanity checks are built-in detectors that scan the whole catalog for anomalies; detection only, never blocking."
+        path="/checks"
       />
 
       <ConsistencyRuleEditor rules={allConsistencyRules} refOptions={refOptions} violationMessages={violationMessages} />

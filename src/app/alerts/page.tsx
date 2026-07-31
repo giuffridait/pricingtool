@@ -15,6 +15,7 @@ export default async function AlertsPage() {
       <PageHeader
         title="Alerts & notifications"
         description="Sanity-check violations, price-architecture violations, expiring discounts/prices/rules, margin-floor risk, and scheduled activations due soon."
+        path="/alerts"
       />
       <Card>
         {sorted.length === 0 ? (

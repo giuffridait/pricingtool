@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { WORKFLOW } from "@/lib/workflow";
 
 export function Card({ title, action, children }: { title?: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -34,11 +36,48 @@ export function Badge({ children, tone = "info" }: { children: ReactNode; tone?:
   );
 }
 
-export function PageHeader({ title, description }: { title: string; description?: string }) {
+export function PageHeader({ title, description, path }: { title: string; description?: string; path?: string }) {
+  const workflow = path ? WORKFLOW[path] : undefined;
+  const hasWorkflow = workflow && (workflow.before.length > 0 || workflow.after.length > 0);
   return (
     <div className="mb-5 rounded-lg bg-neutral-100 dark:bg-white/5 px-4 py-3">
       <h1 className="text-xl font-semibold">{title}</h1>
       {description && <p className="text-sm text-neutral-700 dark:text-neutral-300 mt-1 max-w-3xl">{description}</p>}
+      {hasWorkflow && (
+        <details className="mt-2 text-xs">
+          <summary className="cursor-pointer text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 inline-block">
+            Where this fits in the workflow
+          </summary>
+          <div className="mt-1.5 space-y-1 text-neutral-600 dark:text-neutral-400">
+            {workflow.before.length > 0 && (
+              <div>
+                Usually comes after:{" "}
+                {workflow.before.map((l, i) => (
+                  <span key={l.href}>
+                    {i > 0 && ", "}
+                    <Link href={l.href} className="underline decoration-dotted hover:text-neutral-900 dark:hover:text-white">
+                      {l.label}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+            {workflow.after.length > 0 && (
+              <div>
+                Often followed by:{" "}
+                {workflow.after.map((l, i) => (
+                  <span key={l.href}>
+                    {i > 0 && ", "}
+                    <Link href={l.href} className="underline decoration-dotted hover:text-neutral-900 dark:hover:text-white">
+                      {l.label}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </details>
+      )}
     </div>
   );
 }

@@ -65,12 +65,34 @@ export default async function OverviewPage({
         description="Coverage across the catalog: what's priced, what falls back to an inherited default, and the fully-resolved runtime price for the selected context."
       />
 
-      <div className="flex gap-3 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
         <Card title="Open alerts">
           <div className="flex gap-3 text-sm">
             <Link href="/alerts"><Badge tone="critical">{bySeverity.critical} critical</Badge></Link>
             <Link href="/alerts"><Badge tone="warning">{bySeverity.warning} warning</Badge></Link>
             <Link href="/alerts"><Badge tone="info">{bySeverity.info} info</Badge></Link>
+          </div>
+        </Card>
+
+        <Card title="Getting started - recommended paths">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-xs font-medium text-neutral-500 mb-1.5">New / running a small store</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li><Link href="/catalog" className="underline decoration-dotted">Catalog & Pricing</Link> - set your base prices</li>
+                <li><Link href="/incentives" className="underline decoration-dotted">Discounts & Incentives</Link> - add a sale or bundle</li>
+                <li><Link href="/calculator" className="underline decoration-dotted">Price Calculator</Link> - check what a customer pays</li>
+              </ol>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-neutral-500 mb-1.5">Advanced pricing setup</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li><Link href="/components" className="underline decoration-dotted">Components</Link> - reusable price add-ons</li>
+                <li><Link href="/rules" className="underline decoration-dotted">Rules</Link> - scope-matched price/discount logic</li>
+                <li><Link href="/price-lists" className="underline decoration-dotted">Price Lists</Link> - customer-group / B2B pricing</li>
+                <li><Link href="/checks" className="underline decoration-dotted">Consistency & Sanity</Link> - catch pricing mistakes</li>
+              </ol>
+            </div>
           </div>
         </Card>
       </div>

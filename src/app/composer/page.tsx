@@ -10,6 +10,7 @@ export default async function ComposerPage() {
       <PageHeader
         title="Final-price composer"
         description="Configure how a final price is composed from typed components: base price, configuration components, discounts, commissions, markup, tax, shipping, and fees - which participate, in what order, and with what calculation semantics, per BU/shop."
+        path="/composer"
       />
       <CompositionDefinitionEditor definitions={definitions} businessUnits={bus} shops={allShops} />
     </div>

@@ -9,6 +9,7 @@ export default async function ComponentsPage() {
       <PageHeader
         title="Configuration & design price components"
         description="Typed components (print area, print technique, personalisation, design premiums, fees) that price effects attach to. Matching dimensions (product type, appearance, size, design) decide which component applies; a child component with a matching dimension the parent doesn't have wins - that's how a hoodie-specific override beats the generic default."
+        path="/components"
       />
       <ComponentEditor components={all} />
     </div>

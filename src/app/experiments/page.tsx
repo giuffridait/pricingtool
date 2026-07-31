@@ -17,6 +17,7 @@ export default async function ExperimentsPage() {
       <PageHeader
         title="Price experiments (A/B tests)"
         description="Define a control vs. challenger price for a SKU/market. The challenger is authored using the same price entities and must pass its margin floor before it's allowed to start."
+        path="/experiments"
       />
       <ExperimentEditor experiments={allExperiments} skuOptions={skuOptions} businessUnits={bus} />
     </div>

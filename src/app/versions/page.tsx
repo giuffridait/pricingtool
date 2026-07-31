@@ -26,6 +26,7 @@ export default async function VersionsPage() {
       <PageHeader
         title="Version control & scheduling"
         description="Every price/discount/component/rule/consistency-rule edit is versioned: draft → approve → activate (or schedule for later) → revert. This is the full history across all entity types."
+        path="/versions"
       />
       <Card>
         {versions.length === 0 ? (

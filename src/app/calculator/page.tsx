@@ -22,6 +22,7 @@ export default async function CalculatorPage({
       <PageHeader
         title="Price & basket calculator"
         description="Runs a live pricing request through the resolution engine and shows the full trace: which base price/override was used, which rule replaced it, which components and discounts applied (and which were excluded by stacking rules), and any floor/ceiling safeguard."
+        path="/calculator"
       />
       <PriceCalculatorForm skuOptions={skuOptions} businessUnits={bus} shops={allShops} initialSkuId={skuId} />
     </div>

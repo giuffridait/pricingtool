@@ -35,6 +35,7 @@ export default async function HistoryPage({
       <PageHeader
         title="Historical price explorer"
         description="Historical price, units, revenue, discount rate, contribution, margin, returns, and commissions by SKU. This prototype has no real order history, so the numbers are synthetically generated per SKU across the last 6 months (not broken out by market/channel)."
+        path="/history"
       />
 
       <form className="flex flex-wrap items-center gap-2 mb-4 text-sm">

@@ -58,6 +58,7 @@ export default async function CatalogPage({
       <PageHeader
         title="Catalog & pricing"
         description="Author base prices and overrides at product-group, product, variant, and SKU level, per business unit and (optionally) per shop. Each row shows the effective price and which level actually supplies it - a child level with no override inherits from its parent, and floor/ceiling walk the same chain."
+        path="/catalog"
       />
 
       <form className="mb-4">
