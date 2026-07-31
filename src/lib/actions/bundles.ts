@@ -38,12 +38,12 @@ export async function saveBundleAction(input: BundleInput) {
     }),
     { note: `Saved bundle "${input.name}"` },
   );
-  revalidatePath("/bundles");
+  revalidatePath("/discounts");
   revalidatePath("/basket");
 }
 
 export async function deleteBundleAction(id: string) {
   await deleteVersioned("bundle", id, "Removed bundle");
-  revalidatePath("/bundles");
+  revalidatePath("/discounts");
   revalidatePath("/basket");
 }

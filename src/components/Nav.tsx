@@ -30,7 +30,7 @@ const groups: NavGroup[] = [
     defaultOpen: true,
     links: [
       { href: "/catalog", label: "Catalog & Pricing" },
-      { href: "/discounts", label: "Discounts" },
+      { href: "/discounts", label: "Discounts & Bundles" },
       { href: "/calculator", label: "Price Calculator" },
     ],
   },
@@ -38,7 +38,6 @@ const groups: NavGroup[] = [
     label: "Merchandising",
     defaultOpen: true,
     links: [
-      { href: "/bundles", label: "Bundles & Mix-and-Match" },
       { href: "/calendars", label: "Pricing Calendars" },
       { href: "/presentation", label: "Presentation" },
       { href: "/basket", label: "Basket Calculator" },
