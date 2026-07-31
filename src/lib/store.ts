@@ -1,7 +1,14 @@
 import { promises as fs } from "fs";
+import os from "os";
 import path from "path";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const BUNDLED_DIR = path.join(process.cwd(), "data");
+// Vercel's serverless filesystem is read-only outside /tmp, so writes have to
+// go somewhere else there. /tmp is ephemeral (wiped on cold start, not shared
+// across instances) - fine for a demo deploy, not real persistence. Locally
+// (and on any host with a writable project dir) this is just DATA_DIR, so
+// behavior is unchanged.
+const WRITABLE_DIR = process.env.VERCEL ? path.join(os.tmpdir(), "pricingtool-data") : BUNDLED_DIR;
 
 // Simple file-backed JSON "collections". This is a prototype persistence layer:
 // one JSON array per entity type, read/written whole. A per-file write queue
@@ -19,65 +26,56 @@ function queued<T>(file: string, fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
-async function filePath(collection: string) {
-  return path.join(DATA_DIR, `${collection}.json`);
-}
-
-export async function readCollection<T>(collection: string): Promise<T[]> {
-  const p = await filePath(collection);
+async function readJson<T>(dir: string, collection: string): Promise<T[] | undefined> {
   try {
-    const raw = await fs.readFile(p, "utf-8");
+    const raw = await fs.readFile(path.join(dir, `${collection}.json`), "utf-8");
     return JSON.parse(raw) as T[];
   } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return undefined;
     throw err;
   }
 }
 
+// Prefer whatever's already been written to WRITABLE_DIR (this instance's
+// edits); fall back to the bundled seed data otherwise.
+async function currentList<T>(collection: string): Promise<T[]> {
+  if (WRITABLE_DIR !== BUNDLED_DIR) {
+    const written = await readJson<T>(WRITABLE_DIR, collection);
+    if (written !== undefined) return written;
+  }
+  return (await readJson<T>(BUNDLED_DIR, collection)) ?? [];
+}
+
+async function writeJson<T>(collection: string, data: T[]): Promise<void> {
+  await fs.mkdir(WRITABLE_DIR, { recursive: true });
+  await fs.writeFile(path.join(WRITABLE_DIR, `${collection}.json`), JSON.stringify(data, null, 2), "utf-8");
+}
+
+export async function readCollection<T>(collection: string): Promise<T[]> {
+  return currentList<T>(collection);
+}
+
 export async function writeCollection<T>(collection: string, data: T[]): Promise<void> {
-  await queued(collection, async () => {
-    const p = await filePath(collection);
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.writeFile(p, JSON.stringify(data, null, 2), "utf-8");
-  });
+  await queued(collection, () => writeJson(collection, data));
 }
 
 export async function upsert<T extends { id: string }>(collection: string, item: T): Promise<T> {
   return queued(collection, async () => {
-    const p = await filePath(collection);
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    let list: T[] = [];
-    try {
-      list = JSON.parse(await fs.readFile(p, "utf-8")) as T[];
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
-    }
+    const list = await currentList<T>(collection);
     const idx = list.findIndex((x) => x.id === item.id);
     if (idx >= 0) list[idx] = item;
     else list.push(item);
-    await fs.writeFile(p, JSON.stringify(list, null, 2), "utf-8");
+    await writeJson(collection, list);
     return item;
   });
 }
 
 export async function remove(collection: string, id: string): Promise<void> {
   await queued(collection, async () => {
-    const p = await filePath(collection);
-    let list: { id: string }[] = [];
-    try {
-      list = JSON.parse(await fs.readFile(p, "utf-8"));
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
-      return;
-    }
-    await fs.writeFile(
-      p,
-      JSON.stringify(
-        list.filter((x) => x.id !== id),
-        null,
-        2,
-      ),
-      "utf-8",
+    const list = await currentList<{ id: string }>(collection);
+    await writeJson(
+      collection,
+      list.filter((x) => x.id !== id),
     );
   });
 }
