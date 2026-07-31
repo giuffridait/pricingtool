@@ -126,10 +126,10 @@ export default function Nav() {
           {group.label && (
             <button
               onClick={() => toggle(group.label!)}
-              className="w-full flex items-center justify-between px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+              className="w-full flex items-center justify-between gap-2 px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
             >
-              <span>{group.label}</span>
-              <span className="text-neutral-400">{openState[group.label] ? "−" : "+"}</span>
+              <span className="text-left flex-1 min-w-0">{group.label}</span>
+              <span className="text-neutral-400 shrink-0">{openState[group.label] ? "−" : "+"}</span>
             </button>
           )}
           {(!group.label || openState[group.label]) && (
