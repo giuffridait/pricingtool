@@ -54,6 +54,7 @@ const groups: NavGroup[] = [
     links: [
       { href: "/alerts", label: "Alerts" },
       { href: "/checks", label: "Consistency & Sanity" },
+      { href: "/whatif", label: "What-If & Break-Even" },
       { href: "/versions", label: "Versions" },
       { href: "/experiments", label: "Experiments" },
       { href: "/history", label: "Historical Prices" },
