@@ -8,6 +8,8 @@ import type { ScopeOption } from "@/components/DiscountEditor";
 
 const EFFECT_TYPES: RuleEffectType[] = ["setPrice", "applyDiscount", "applyComponent", "applyCommission"];
 
+type RuleRole = "base" | "override" | "none";
+
 export default function RuleEditor({
   rules,
   scopeOptions,
@@ -42,42 +44,110 @@ export default function RuleEditor({
       }
     >
       {editing === "new" && <RuleForm {...refs} onDone={() => setEditing(null)} />}
-      <div className="space-y-2 mt-2">
-        {[...rules]
-          .sort((a, b) => b.priority - a.priority)
-          .map((r) =>
-            editing === r.id ? (
-              <RuleForm key={r.id} {...refs} initial={r} onDone={() => setEditing(null)} />
-            ) : (
-              <div key={r.id} className="flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-2 text-sm">
-                <div>
-                  <span className="font-medium">{r.name}</span> <Badge tone="approved">priority {r.priority}</Badge>{" "}
-                  <Badge>{r.effect.type}</Badge>
-                  {r.stackingGroup && <Badge tone="draft">stack: {r.stackingGroup}</Badge>}
-                  <div className="text-xs text-neutral-500 mt-0.5">
-                    scope: {scopeLabel(r, scopeOptions)} · dims:{" "}
-                    {Object.entries(r.dimensions)
-                      .filter(([, v]) => v)
-                      .map(([k, v]) => `${k}=${v}`)
-                      .join(", ") || "any"}{" "}
-                    · effect: {effectLabel(r, discounts, components, commissions)}
-                    {r.validFrom || r.validTo ? ` · valid ${r.validFrom ?? "…"} → ${r.validTo ?? "…"}` : ""}
-                    {r.calendarId ? ` · calendar: ${calendars.find((c) => c.id === r.calendarId)?.name ?? r.calendarId}` : ""}
-                    {r.exclusionGroups?.length ? ` · excludes: ${r.exclusionGroups.join(", ")}` : ""}
+      <div className="space-y-4 mt-2">
+        {groupRules(rules, scopeOptions).map((group) => (
+          <div key={group.key}>
+            <div className="text-xs font-semibold uppercase tracking-wide text-neutral-400 border-t border-black/5 dark:border-white/5 pt-2">
+              {group.label}
+            </div>
+            <div className="space-y-2 mt-1">
+              {group.rows.map(({ rule: r, role, indent }) =>
+                editing === r.id ? (
+                  <RuleForm key={r.id} {...refs} initial={r} onDone={() => setEditing(null)} />
+                ) : (
+                  <div
+                    key={r.id}
+                    className={`flex items-center justify-between pt-1 text-sm ${
+                      indent ? "ml-5 pl-3 border-l-2 border-black/10 dark:border-white/15" : ""
+                    }`}
+                  >
+                    <div>
+                      <span className="font-medium">{r.name}</span>{" "}
+                      {role !== "none" && (
+                        <Badge tone={role === "base" ? "active" : "scheduled"}>
+                          {role === "base" ? "base" : "overrides when it matches"}
+                        </Badge>
+                      )}{" "}
+                      <Badge tone="approved">priority {r.priority}</Badge> <Badge>{r.effect.type}</Badge>
+                      {r.stackingGroup && <Badge tone="draft">stack: {r.stackingGroup}</Badge>}
+                      <div className="text-xs text-neutral-500 mt-0.5">
+                        scope: {scopeLabel(r, scopeOptions)} · dims:{" "}
+                        {Object.entries(r.dimensions)
+                          .filter(([, v]) => v)
+                          .map(([k, v]) => `${k}=${v}`)
+                          .join(", ") || "any"}{" "}
+                        · effect: {effectLabel(r, discounts, components, commissions)}
+                        {r.validFrom || r.validTo ? ` · valid ${r.validFrom ?? "…"} → ${r.validTo ?? "…"}` : ""}
+                        {r.calendarId ? ` · calendar: ${calendars.find((c) => c.id === r.calendarId)?.name ?? r.calendarId}` : ""}
+                        {r.exclusionGroups?.length ? ` · excludes: ${r.exclusionGroups.join(", ")}` : ""}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button className="underline text-xs" onClick={() => setEditing(r.id)}>
+                        edit
+                      </button>
+                      <DeleteButton id={r.id} />
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <button className="underline text-xs" onClick={() => setEditing(r.id)}>
-                    edit
-                  </button>
-                  <DeleteButton id={r.id} />
-                </div>
-              </div>
-            ),
-          )}
+                ),
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </Card>
   );
+}
+
+// Rules that target the same catalog scope are the ones that actually
+// compete with each other at runtime (see scopeSpecificity in the engine) -
+// grouping by scope turns "Premium Tee base EU" + "Premium Tee DE sale" from
+// two unrelated rows into a visible pair. Only setPrice rules get a base/
+// override role: they're the one true single-winner slot (resolvePrice picks
+// exactly one), whereas applyDiscount rules can legitimately co-apply across
+// different stacking groups, so labeling one of them "base" over another
+// would claim a competition that isn't actually happening. Within the
+// setPrice set, the rule with the fewest dimension constraints is the base
+// (eligible for every request in scope); the rest only win in narrower
+// situations, which is why authors give them a *higher* priority than the
+// base - that number is how an override beats the base when both are
+// eligible, not a sign of which one is the base, so specificity (not
+// priority) is what orders/labels this set.
+function groupRules(rules: PricingRule[], scopeOptions: ScopeOption[]) {
+  const dimSpecificity = (r: PricingRule) => Object.values(r.dimensions).filter((v) => v).length;
+  const scopeKey = (r: PricingRule) => r.scope.skuId ?? r.scope.variantId ?? r.scope.productId ?? r.scope.productGroupId ?? "global";
+
+  const byKey = new Map<string, PricingRule[]>();
+  for (const r of rules) {
+    const key = scopeKey(r);
+    if (!byKey.has(key)) byKey.set(key, []);
+    byKey.get(key)!.push(r);
+  }
+
+  const groups = [...byKey.entries()].map(([key, groupRules]) => {
+    const setPriceRules = groupRules
+      .filter((r) => r.effect.type === "setPrice")
+      .sort((a, b) => dimSpecificity(a) - dimSpecificity(b) || b.priority - a.priority);
+    const otherRules = groupRules.filter((r) => r.effect.type !== "setPrice").sort((a, b) => b.priority - a.priority);
+
+    const rows: { rule: PricingRule; role: RuleRole; indent: boolean }[] = [
+      ...setPriceRules.map((r, i) => ({
+        rule: r,
+        role: (setPriceRules.length > 1 ? (i === 0 ? "base" : "override") : "none") as RuleRole,
+        indent: i > 0,
+      })),
+      ...otherRules.map((r) => ({ rule: r, role: "none" as RuleRole, indent: false })),
+    ];
+
+    return {
+      key,
+      label: key === "global" ? "Global (all catalog)" : scopeLabel(groupRules[0], scopeOptions),
+      rows,
+    };
+  });
+
+  groups.sort((a, b) => (a.key === "global" ? -1 : b.key === "global" ? 1 : a.label.localeCompare(b.label)));
+  return groups;
 }
 
 function scopeLabel(r: PricingRule, options: ScopeOption[]) {
