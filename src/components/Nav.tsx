@@ -15,10 +15,11 @@ interface NavGroup {
   links: NavLink[];
 }
 
-// Grouped so a newbie running a small store sees a short, obvious list by
-// default (Essentials + Storefront), while everything a power user needs
-// is one click away behind two labeled, collapsed sections - never removed,
-// just not shoved in their face on day one.
+// Grouped by what the page does rather than how advanced it is: everything
+// that sets or computes a price lives under one heading, everything that
+// layers a promotion/time-window/customer-facing treatment on top of that
+// price lives under another. Monitoring stays separate and collapsed by
+// default - never removed, just not shoved in their face on day one.
 const groups: NavGroup[] = [
   {
     label: null,
@@ -26,31 +27,25 @@ const groups: NavGroup[] = [
     links: [{ href: "/overview", label: "Overview" }],
   },
   {
-    label: "Essentials",
+    label: "Price Setting",
     defaultOpen: true,
     links: [
       { href: "/catalog", label: "Catalog & Pricing" },
-      { href: "/incentives", label: "Discounts & Incentives" },
-      { href: "/calculator", label: "Price Calculator" },
-    ],
-  },
-  {
-    label: "Storefront",
-    defaultOpen: true,
-    links: [
-      { href: "/calendars", label: "Sales Calendar" },
-      { href: "/presentation", label: "Storefront Display" },
-    ],
-  },
-  {
-    label: "Advanced Configuration",
-    defaultOpen: false,
-    links: [
       { href: "/components", label: "Components" },
       { href: "/rules", label: "Rules" },
       { href: "/composer", label: "Final-Price Composer" },
       { href: "/price-lists", label: "Price Lists" },
+      { href: "/calculator", label: "Price Calculator" },
       { href: "/bulk-operations", label: "Bulk Operations" },
+    ],
+  },
+  {
+    label: "Discounts & Merchandising",
+    defaultOpen: true,
+    links: [
+      { href: "/incentives", label: "Discounts & Incentives" },
+      { href: "/calendars", label: "Sales Calendar" },
+      { href: "/presentation", label: "Storefront Display" },
     ],
   },
   {
