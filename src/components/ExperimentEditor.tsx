@@ -45,7 +45,8 @@ export default function ExperimentEditor({
 function ExperimentRow({ exp, skuOptions, onEdit }: { exp: Experiment; skuOptions: SkuOption[]; onEdit: () => void }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const skuLabel = skuOptions.find((s) => s.id === exp.skuId)?.label ?? exp.skuId;
+  const skuOption = skuOptions.find((s) => s.id === exp.skuId);
+  const skuLabel = skuOption?.label ?? exp.skuId;
 
   function setStatus(status: Experiment["status"]) {
     startTransition(async () => {
@@ -58,7 +59,8 @@ function ExperimentRow({ exp, skuOptions, onEdit }: { exp: Experiment; skuOption
     <div className="border-t border-black/5 dark:border-white/5 pt-2 text-sm">
       <div className="flex items-center justify-between">
         <div>
-          <span className="font-medium">{exp.name}</span> <Badge tone={exp.status === "running" ? "active" : "draft"}>{exp.status}</Badge>
+          <span className="font-medium">{exp.name}</span> <Badge tone={exp.status === "running" ? "active" : "draft"}>{exp.status}</Badge>{" "}
+          {skuOption?.kvi && <Badge tone="warning">KVI</Badge>}
           <div className="text-xs text-neutral-500 mt-0.5">
             {skuLabel} · {exp.market} · control {exp.controlPrice.toFixed(2)} ({exp.controlTrafficPercent}%) vs challenger{" "}
             {exp.challengerPrice.toFixed(2)} ({exp.challengerTrafficPercent}%) · {exp.startDate} → {exp.endDate} · margin floor {exp.marginFloor}
@@ -149,6 +151,7 @@ function ExperimentForm({
           {skuOptions.map((o) => (
             <option key={o.id} value={o.id}>
               {o.label}
+              {o.kvi ? " (KVI)" : ""}
             </option>
           ))}
         </select>

@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { newId } from "../store";
-import type { CatalogLevel } from "../types";
-import { priceOverrides } from "../repo";
+import type { CatalogLevel, PriceRole } from "../types";
+import { priceOverrides, products } from "../repo";
 import { saveVersioned, deleteVersioned } from "./helpers";
 
 export interface PriceOverrideInput {
@@ -61,4 +61,21 @@ export async function deletePriceOverrideAction(id: string) {
   revalidatePath("/catalog");
   revalidatePath("/overview");
   revalidatePath("/calculator");
+}
+
+export async function setProductPriceRoleAction(productId: string, priceRole: PriceRole) {
+  const product = (await products.all()).find((p) => p.id === productId);
+  if (!product) return;
+  await saveVersioned(
+    "product",
+    productId,
+    () => ({ ...product, priceRole }),
+    { note: `Set "${product.name}" price role to ${priceRole}` },
+  );
+  revalidatePath("/catalog");
+  revalidatePath("/checks");
+  revalidatePath("/experiments");
+  revalidatePath("/whatif");
+  revalidatePath("/versions");
+  revalidatePath("/alerts");
 }

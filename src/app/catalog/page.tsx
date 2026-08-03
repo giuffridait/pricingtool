@@ -1,9 +1,10 @@
 import { Fragment } from "react";
 import { businessUnits, shops, priceOverrides } from "@/lib/repo";
-import { loadCatalog } from "@/lib/engine/catalog";
+import { loadCatalog, resolvePriceRole } from "@/lib/engine/catalog";
 import { resolveBasePrice, formatFloorCeiling } from "@/lib/engine/base";
 import { PageHeader, Card, Badge } from "@/components/ui";
 import PriceOverrideEditor from "@/components/PriceOverrideEditor";
+import KviToggle from "@/components/KviToggle";
 
 function effectiveBadge(
   overrides: Parameters<typeof resolveBasePrice>[0],
@@ -30,9 +31,9 @@ function effectiveBadge(
 export default async function CatalogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; kvi?: string }>;
 }) {
-  const { q: rawQuery } = await searchParams;
+  const { q: rawQuery, kvi: kviParam } = await searchParams;
   const [bus, allShops, catalog, overrides] = await Promise.all([
     businessUnits.all(),
     shops.all(),
@@ -41,16 +42,17 @@ export default async function CatalogPage({
   ]);
 
   const query = (rawQuery ?? "").trim().toLowerCase();
+  const kviOnly = kviParam === "1";
   const allRows = catalog.skus.map((sku) => {
     const variant = catalog.variants.find((v) => v.id === sku.variantId)!;
     const product = catalog.products.find((p) => p.id === variant.productId)!;
     const productGroup = catalog.productGroups.find((g) => g.id === product.productGroupId)!;
     return { sku, variant, product, productGroup };
   });
-  const rows = query
-    ? allRows.filter((r) => [r.productGroup.name, r.product.name, r.variant.name, r.sku.name].some((n) => n.toLowerCase().includes(query)))
-    : allRows;
-  const searching = query.length > 0;
+  const rows = allRows
+    .filter((r) => !query || [r.productGroup.name, r.product.name, r.variant.name, r.sku.name].some((n) => n.toLowerCase().includes(query)))
+    .filter((r) => !kviOnly || resolvePriceRole(r.product, r.sku) === "kvi");
+  const searching = query.length > 0 || kviOnly;
 
   const groupIds = [...new Set(rows.map((r) => r.productGroup.id))];
 
@@ -62,7 +64,7 @@ export default async function CatalogPage({
         path="/catalog"
       />
 
-      <form className="mb-4">
+      <form className="mb-4 flex items-center gap-3 flex-wrap">
         <input
           type="search"
           name="q"
@@ -70,11 +72,21 @@ export default async function CatalogPage({
           placeholder="Search product group, product, variant, or SKU…"
           className="border border-black/25 dark:border-white/25 rounded px-3 py-1.5 text-sm bg-white dark:bg-neutral-900 w-full max-w-md"
         />
+        <label className="flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+          <input type="checkbox" name="kvi" value="1" defaultChecked={kviOnly} />
+          KVI only
+        </label>
+        <button className="text-xs underline text-neutral-500" type="submit">
+          Apply
+        </button>
       </form>
 
       {rows.length === 0 ? (
         <Card>
-          <p className="text-sm text-neutral-500 italic">No catalog items match &quot;{rawQuery}&quot;.</p>
+          <p className="text-sm text-neutral-500 italic">
+            No catalog items match{rawQuery ? ` "${rawQuery}"` : ""}
+            {kviOnly ? " (KVI only)" : ""}.
+          </p>
         </Card>
       ) : (
         <div className="space-y-3">
@@ -116,8 +128,9 @@ export default async function CatalogPage({
                       return (
                         <details key={product.id} open={searching} className="rounded border border-black/15 dark:border-white/15 p-2">
                           <summary className="cursor-pointer flex items-center justify-between flex-wrap gap-2 list-none">
-                            <span>
+                            <span className="flex items-center gap-1.5">
                               {product.name} <span className="text-xs text-neutral-400">({product.productType})</span>
+                              <KviToggle productId={product.id} priceRole={resolvePriceRole(product)} />
                             </span>
                             {effectiveBadge(overrides, productIds4, productGroup.businessUnitId)}
                           </summary>
@@ -161,6 +174,9 @@ export default async function CatalogPage({
                                         <tr key={sku.id} className="border-t border-black/10 dark:border-white/10 text-neutral-600 dark:text-neutral-400">
                                           <td className="py-1.5 pr-2 pl-4">
                                             {sku.name} <span className="text-xs text-neutral-400">· cost {sku.costBasis.toFixed(2)}</span>
+                                            {resolvePriceRole(product, sku) === "kvi" && (
+                                              <Badge tone="warning">KVI</Badge>
+                                            )}
                                           </td>
                                           <td className="py-1.5">{effectiveBadge(overrides, skuIds4, productGroup.businessUnitId)}</td>
                                           <td className="py-1.5">

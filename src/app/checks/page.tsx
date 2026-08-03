@@ -1,5 +1,5 @@
 import { businessUnits, shops, consistencyRules, discounts, rules, priceOverrides } from "@/lib/repo";
-import { loadCatalog } from "@/lib/engine/catalog";
+import { loadCatalog, resolvePriceRole } from "@/lib/engine/catalog";
 import { runConsistencyChecks, runParityChecks } from "@/lib/engine/consistency";
 import { runSanityChecks } from "@/lib/engine/sanity";
 import { PageHeader, Card, Badge, EmptyState } from "@/components/ui";
@@ -32,8 +32,12 @@ export default async function ChecksPage() {
   const sanityFindings = [...new Map(rawSanityFindings.map((f) => [f.id, f])).values()];
 
   const refOptions: RefOption[] = [
-    ...catalog.productGroups.map((g) => ({ label: `Group: ${g.name}`, id: g.id })),
-    ...catalog.products.map((p) => ({ label: `Product: ${p.name}`, id: p.id })),
+    ...catalog.productGroups.map((g) => ({
+      label: `Group: ${g.name}`,
+      id: g.id,
+      kvi: catalog.products.some((p) => p.productGroupId === g.id && resolvePriceRole(p) === "kvi"),
+    })),
+    ...catalog.products.map((p) => ({ label: `Product: ${p.name}`, id: p.id, kvi: resolvePriceRole(p) === "kvi" })),
   ];
 
   return (

@@ -10,6 +10,7 @@ const TYPES: ConsistencyCheckType[] = ["minGapPercent", "minGapAbsolute", "order
 export interface RefOption {
   id: string;
   label: string;
+  kvi?: boolean;
 }
 
 export default function ConsistencyRuleEditor({
@@ -44,7 +45,8 @@ export default function ConsistencyRuleEditor({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-medium">{r.name}</span> <Badge>{r.type}</Badge>{" "}
-                  <Badge tone={r.severity}>{r.severity}</Badge>
+                  <Badge tone={r.severity}>{r.severity}</Badge>{" "}
+                  {refOptions.find((o) => o.id === r.subjectRefId)?.kvi && <Badge tone="warning">protects a KVI</Badge>}
                   <div className="text-xs text-neutral-500 mt-0.5">
                     subject: {refOptions.find((o) => o.id === r.subjectRefId)?.label ?? r.subjectRefId} · comparator:{" "}
                     {refOptions.find((o) => o.id === r.comparatorRefId)?.label ?? r.comparatorRefId} · threshold {r.threshold}
@@ -126,6 +128,7 @@ function RuleForm({ refOptions, initial, onDone }: { refOptions: RefOption[]; in
           {refOptions.map((o) => (
             <option key={o.id} value={o.id}>
               {o.label}
+              {o.kvi ? " (KVI)" : ""}
             </option>
           ))}
         </select>
@@ -138,6 +141,7 @@ function RuleForm({ refOptions, initial, onDone }: { refOptions: RefOption[]; in
             {refOptions.map((o) => (
               <option key={o.id} value={o.id}>
                 {o.label}
+                {o.kvi ? " (KVI)" : ""}
               </option>
             ))}
           </select>

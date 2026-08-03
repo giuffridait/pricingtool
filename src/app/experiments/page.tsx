@@ -1,5 +1,5 @@
 import { experiments, businessUnits } from "@/lib/repo";
-import { loadCatalog } from "@/lib/engine/catalog";
+import { loadCatalog, resolvePriceRole } from "@/lib/engine/catalog";
 import { PageHeader } from "@/components/ui";
 import ExperimentEditor from "@/components/ExperimentEditor";
 
@@ -9,7 +9,7 @@ export default async function ExperimentsPage() {
   const skuOptions = catalog.skus.map((sku) => {
     const variant = catalog.variants.find((v) => v.id === sku.variantId)!;
     const product = catalog.products.find((p) => p.id === variant.productId)!;
-    return { id: sku.id, label: `${product.name} — ${variant.name} — ${sku.name}` };
+    return { id: sku.id, label: `${product.name} — ${variant.name} — ${sku.name}`, kvi: resolvePriceRole(product, sku) === "kvi" };
   });
 
   return (

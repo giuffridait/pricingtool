@@ -94,18 +94,31 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
   }
   let { price: basePrice, currency } = resolved;
   const { floor, ceiling } = resolved;
-  trace.push({
-    label: "Base price",
-    detail: `${currency} ${basePrice.toFixed(2)} from ${node.sku.name} chain, level="${resolved.level}"${
-      resolved.shopSpecific ? " (shop-specific override)" : " (BU-wide)"
-    }${floor !== undefined ? `, floor=${floor}` : ""}${ceiling !== undefined ? `, ceiling=${ceiling}` : ""}`,
-  });
+  if (ctx.overridePrice !== undefined) {
+    basePrice = ctx.overridePrice;
+    trace.push({
+      label: "Base price",
+      detail: `${currency} ${basePrice.toFixed(2)} - hypothetical override (what-if), replacing catalog/price-list resolution${
+        floor !== undefined ? `, floor=${floor}` : ""
+      }${ceiling !== undefined ? `, ceiling=${ceiling}` : ""}`,
+    });
+  } else {
+    trace.push({
+      label: "Base price",
+      detail: `${currency} ${basePrice.toFixed(2)} from ${node.sku.name} chain, level="${resolved.level}"${
+        resolved.shopSpecific ? " (shop-specific override)" : " (BU-wide)"
+      }${floor !== undefined ? `, floor=${floor}` : ""}${ceiling !== undefined ? `, ceiling=${ceiling}` : ""}`,
+    });
+  }
 
   // 1b. B2B / customer-group price lists: a matching list replaces the
   // catalog base price outright (highest-priority match wins) before any
-  // rule/discount resolution runs on top.
+  // rule/discount resolution runs on top. Skipped entirely under a what-if
+  // override - the whole point is pricing from the hypothetical number.
   let priceListApplied = false;
-  if (ctx.customerGroup) {
+  if (ctx.overridePrice !== undefined && ctx.customerGroup) {
+    trace.push({ label: "Price list", detail: "Skipped - a what-if override replaces price-list resolution too." });
+  } else if (ctx.overridePrice === undefined && ctx.customerGroup) {
     const allPriceLists = await priceLists.all();
     const listMatch = allPriceLists
       .filter((l) => l.businessUnitId === ctx.businessUnitId)
@@ -143,7 +156,7 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     .sort((a, b) => b.rule.priority - a.rule.priority || b.scopeScore - a.scopeScore || b.dimScore - a.dimScore);
 
   let ruleAdjustedPrice = basePrice;
-  const setPriceMatch = priceListApplied ? undefined : eligibleRules.find((m) => m.rule.effect.type === "setPrice");
+  const setPriceMatch = priceListApplied || ctx.overridePrice !== undefined ? undefined : eligibleRules.find((m) => m.rule.effect.type === "setPrice");
   if (setPriceMatch) {
     ruleAdjustedPrice = setPriceMatch.rule.effect.price ?? basePrice;
     trace.push({
@@ -152,6 +165,8 @@ export async function resolvePrice(ctx: PricingContext): Promise<ResolvedPrice> 
     });
   } else if (priceListApplied) {
     trace.push({ label: "Pricing rule", detail: "Skipped - a price list already supplied the price for this customer group." });
+  } else if (ctx.overridePrice !== undefined) {
+    trace.push({ label: "Pricing rule", detail: "Skipped - a what-if override replaces setPrice rule resolution too." });
   } else {
     trace.push({ label: "Pricing rule", detail: "No setPrice rule matched; base price stands." });
   }

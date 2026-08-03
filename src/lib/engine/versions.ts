@@ -12,13 +12,15 @@ import {
   presentationPolicies,
   compositionDefinitions,
   priceLists,
+  products,
 } from "../repo";
 import { newId } from "../store";
 
 // Draft -> (review) -> approved -> (scheduled) -> active -> reverted workflow,
 // generic across every editable entity type (price overrides, discounts,
 // components, rules, consistency rules, bundles, mix-and-match sets, pricing
-// calendars, presentation policies, composition definitions, price lists).
+// calendars, presentation policies, composition definitions, price lists,
+// products - the last for catalog-level fields like priceRole).
 // `payload: null` means "delete this entity" when activated.
 
 export type VersionedEntityType =
@@ -32,7 +34,8 @@ export type VersionedEntityType =
   | "pricingCalendar"
   | "presentationPolicy"
   | "compositionDefinition"
-  | "priceList";
+  | "priceList"
+  | "product";
 
 const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,6 +60,8 @@ const SAVERS: Record<VersionedEntityType, (payload: unknown) => Promise<unknown>
   compositionDefinition: (p) => compositionDefinitions.save(p as any),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   priceList: (p) => priceLists.save(p as any),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  product: (p) => products.save(p as any),
 };
 
 const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
@@ -71,6 +76,7 @@ const REMOVERS: Record<VersionedEntityType, (id: string) => Promise<void>> = {
   presentationPolicy: presentationPolicies.remove,
   compositionDefinition: compositionDefinitions.remove,
   priceList: priceLists.remove,
+  product: products.remove,
 };
 
 async function latestActiveVersion(entityType: string, entityId: string): Promise<EntityVersion | undefined> {

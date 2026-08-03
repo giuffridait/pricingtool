@@ -1,5 +1,7 @@
 import { allVersions } from "@/lib/engine/versions";
 import type { VersionedEntityType } from "@/lib/engine/versions";
+import { loadCatalog, kviLabelForOverride } from "@/lib/engine/catalog";
+import type { PriceOverride } from "@/lib/types";
 import { PageHeader, Card, Badge, EmptyState } from "@/components/ui";
 import VersionActions from "@/components/VersionActions";
 
@@ -14,7 +16,7 @@ function summarize(payload: unknown): string {
 }
 
 export default async function VersionsPage() {
-  const versions = await allVersions();
+  const [versions, catalog] = await Promise.all([allVersions(), loadCatalog()]);
   const byEntity = new Map<string, typeof versions>();
   for (const v of versions) {
     const key = `${v.entityType}:${v.entityId}`;
@@ -42,17 +44,21 @@ export default async function VersionsPage() {
                     {entityType} · {entityId}
                   </div>
                   <ul className="space-y-1">
-                    {sorted.map((v, i) => (
-                      <li key={v.id} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <Badge tone={v.status}>{v.status}</Badge>
-                          <span>{summarize(v.payload)}</span>
-                          {v.note && <span className="text-neutral-500 text-xs">— {v.note}</span>}
-                          <span className="text-neutral-400 text-xs">{new Date(v.createdAt).toLocaleString()}</span>
-                        </div>
-                        <VersionActions versionId={v.id} entityType={entityType} entityId={entityId} status={v.status} hasPrevious={i < sorted.length - 1 || !!v.previousVersionId} />
-                      </li>
-                    ))}
+                    {sorted.map((v, i) => {
+                      const kviLabel = entityType === "priceOverride" && v.payload ? kviLabelForOverride(catalog, v.payload as PriceOverride) : null;
+                      return (
+                        <li key={v.id} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <Badge tone={v.status}>{v.status}</Badge>
+                            {kviLabel && <Badge tone="warning">touches KVI: {kviLabel}</Badge>}
+                            <span>{summarize(v.payload)}</span>
+                            {v.note && <span className="text-neutral-500 text-xs">— {v.note}</span>}
+                            <span className="text-neutral-400 text-xs">{new Date(v.createdAt).toLocaleString()}</span>
+                          </div>
+                          <VersionActions versionId={v.id} entityType={entityType} entityId={entityId} status={v.status} hasPrevious={i < sorted.length - 1 || !!v.previousVersionId} />
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               );

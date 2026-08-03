@@ -1,7 +1,7 @@
-import type { Alert } from "../types";
+import type { Alert, PriceOverride } from "../types";
 import { businessUnits, shops, discounts, rules, consistencyRules, alerts as alertsRepo, skus, priceOverrides } from "../repo";
 import { writeCollection } from "../store";
-import { loadCatalog, resolveNode, nodeIds } from "./catalog";
+import { loadCatalog, resolveNode, nodeIds, kviLabelForOverride } from "./catalog";
 import { resolveBasePrice } from "./base";
 import { runConsistencyChecks, runParityChecks } from "./consistency";
 import { runSanityChecks } from "./sanity";
@@ -9,9 +9,14 @@ import { runDueScheduledActivations, allVersions } from "./versions";
 
 const EXPIRY_WINDOW_DAYS = 14;
 const MARGIN_FLOOR_RISK_PERCENT = 10;
+const KVI_CHANGE_WINDOW_DAYS = 3;
 
 function daysUntil(iso: string): number {
   return (new Date(iso).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+}
+
+function daysSince(iso: string): number {
+  return (Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24);
 }
 
 // Recomputes the full alert set from current data (sanity findings,
@@ -146,6 +151,23 @@ export async function generateAlerts(): Promise<Alert[]> {
         acknowledged: false,
       });
     }
+  }
+
+  for (const v of versionList) {
+    if (v.entityType !== "priceOverride" || v.status !== "active" || !v.activatedAt || !v.payload) continue;
+    if (daysSince(v.activatedAt) > KVI_CHANGE_WINDOW_DAYS) continue;
+    const label = kviLabelForOverride(catalog, v.payload as PriceOverride);
+    if (!label) continue;
+    fresh.push({
+      id: `kvi-price-change-${v.id}`,
+      type: "kviPriceChange",
+      severity: "warning",
+      message: `${label} is a Key Value Item and its price changed within the last ${KVI_CHANGE_WINDOW_DAYS} days - double-check before this compounds with other changes.`,
+      relatedEntityType: "priceOverride",
+      relatedEntityId: v.entityId,
+      createdAt: now,
+      acknowledged: false,
+    });
   }
 
   // Some checks (e.g. overlapping discount tiers) aren't BU-specific but still

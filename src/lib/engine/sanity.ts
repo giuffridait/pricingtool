@@ -1,7 +1,8 @@
-import type { Discount, PriceOverride, PricingRule, Shop } from "../types";
+import type { Discount, DiscountScope, PriceOverride, PricingRule, Shop } from "../types";
 import { resolveBasePrice } from "./base";
 import type { CatalogIndex } from "./catalog";
 import { nodeIds } from "./catalog";
+import { computeBreakEven, UNREALISTIC_UPLIFT_THRESHOLD_PERCENT } from "./breakeven";
 
 // Cross-SKU sanity checks: built-in detectors (not user-authored rules) that
 // scan the whole catalog for anomalies. Detection only - never blocks a save.
@@ -52,17 +53,7 @@ export function runSanityChecks(
   // 2. Sale/rule price above the catalog base price (acting as RRP).
   for (const rule of rules) {
     if (rule.effect.type !== "setPrice" || rule.effect.price === undefined) continue;
-    const target = rule.scope.skuId
-      ? catalog.skus.find((s) => s.id === rule.scope.skuId)
-      : rule.scope.variantId
-        ? catalog.skus.find((s) => s.variantId === rule.scope.variantId)
-        : rule.scope.productId
-          ? catalog.skus.find((s) => catalog.variants.find((v) => v.id === s.variantId)?.productId === rule.scope.productId)
-          : catalog.skus.find((s) => {
-              const v = catalog.variants.find((v) => v.id === s.variantId);
-              const p = v && catalog.products.find((p) => p.id === v.productId);
-              return p?.productGroupId === rule.scope.productGroupId;
-            });
+    const target = targetSkuForScope(catalog, rule.scope);
     if (!target) continue;
     const ids = nodeIdsForSku(catalog, target.id);
     if (!ids) continue;
@@ -110,7 +101,58 @@ export function runSanityChecks(
     }
   }
 
+  // 5. Discounts whose configured depth would need an unrealistic volume
+  // increase to break even, given the target SKU's floor as a margin proxy
+  // (no real cost feed exists yet - see computeBreakEven). Skips anything
+  // without a floor rather than guessing a cost, and skips mechanics
+  // (volumeTier/bogo/basketValue) that don't reduce to a single new price.
+  for (const discount of discounts) {
+    if (discount.type !== "percentOff" && discount.type !== "amountOff" && discount.type !== "fixedPrice") continue;
+    const target = targetSkuForScope(catalog, discount.scope);
+    if (!target) continue;
+    const ids = nodeIdsForSku(catalog, target.id);
+    if (!ids) continue;
+    const base = resolveBasePrice(overrides, ids, { businessUnitId });
+    if (!base?.floor) continue;
+    const newPrice =
+      discount.type === "fixedPrice"
+        ? (discount.value ?? base.price)
+        : discount.type === "amountOff"
+          ? base.price - (discount.value ?? 0)
+          : base.price * (1 - (discount.value ?? 0) / 100);
+    const result = computeBreakEven(base.price, newPrice, base.floor);
+    if (!result) {
+      findings.push({
+        id: `breakeven-impossible-${discount.id}-${businessUnitId}`,
+        severity: "critical",
+        message: `Discount "${discount.name}" would price below its floor (${base.floor.toFixed(2)}) - no volume increase breaks even on a loss.`,
+      });
+    } else if (result.requiredVolumeUpliftPercent > UNREALISTIC_UPLIFT_THRESHOLD_PERCENT) {
+      findings.push({
+        id: `breakeven-unrealistic-${discount.id}-${businessUnitId}`,
+        severity: "warning",
+        message: `Discount "${discount.name}" needs a ${result.requiredVolumeUpliftPercent.toFixed(0)}% volume increase to break even (floor-based margin proxy).`,
+      });
+    }
+  }
+
   return findings;
+}
+
+// Shared by checks 2 and 5: resolves the single SKU a rule/discount scope
+// targets (most specific field on the scope wins, matching scopeSpecificity
+// in the pricing engine), taking the first SKU found under that scope.
+function targetSkuForScope(catalog: CatalogIndex, scope: DiscountScope) {
+  if (scope.skuId) return catalog.skus.find((s) => s.id === scope.skuId);
+  if (scope.variantId) return catalog.skus.find((s) => s.variantId === scope.variantId);
+  if (scope.productId) return catalog.skus.find((s) => catalog.variants.find((v) => v.id === s.variantId)?.productId === scope.productId);
+  if (scope.productGroupId)
+    return catalog.skus.find((s) => {
+      const v = catalog.variants.find((v) => v.id === s.variantId);
+      const p = v && catalog.products.find((p) => p.id === v.productId);
+      return p?.productGroupId === scope.productGroupId;
+    });
+  return undefined;
 }
 
 function nodeIdsForSku(catalog: CatalogIndex, skuId: string): ReturnType<typeof nodeIds> | null {

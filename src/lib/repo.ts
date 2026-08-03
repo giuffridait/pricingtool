@@ -43,6 +43,7 @@ export const productGroups = {
 export const products = {
   all: () => readCollection<Product>("products"),
   save: (x: Product) => upsert("products", x),
+  remove: (id: string) => remove("products", id),
 };
 
 export const variants = {

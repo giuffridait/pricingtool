@@ -26,12 +26,20 @@ export interface ProductGroup {
   businessUnitId: ID;
 }
 
+// A Key Value Item is a SKU customers use to judge whether a whole store is
+// cheap or expensive - price changes on these deserve tighter scrutiny than
+// everything else. Set at product level and inherited by every SKU under it,
+// same fallback spirit as base-price inheritance; a SKU can set its own to
+// override the product's. Undefined at both levels means "standard".
+export type PriceRole = "kvi" | "standard";
+
 export interface Product {
   id: ID;
   level: "product";
   name: string;
   productGroupId: ID;
   productType: string; // rule-matching dimension, e.g. "tee"
+  priceRole?: PriceRole;
 }
 
 export interface Variant {
@@ -49,6 +57,7 @@ export interface Sku {
   variantId: ID;
   size: string; // rule-matching dimension
   costBasis: number; // mocked - would come from an owning Cost system
+  priceRole?: PriceRole; // overrides the product's priceRole when set
 }
 
 // A price authored at any catalog level, scoped to a BU and optionally a specific shop.
@@ -399,7 +408,8 @@ export interface Alert {
     | "expiringPrice"
     | "marginFloorRisk"
     | "scheduledActivation"
-    | "experimentEvent";
+    | "experimentEvent"
+    | "kviPriceChange";
   severity: AlertSeverity;
   message: string;
   relatedEntityType?: string;
@@ -446,6 +456,14 @@ export interface PricingContext {
   // that outranked a line-level one) - seeds the exclusion set instead of
   // starting empty. Used by the basket engine for cross-level stacking.
   excludedStackingGroups?: string[];
+  // What-if support: when set, skips base-price/price-list resolution and
+  // uses this as the starting price instead, then runs the normal rules ->
+  // components -> discounts -> safeguards chain on top of it unchanged. Lets
+  // the What-If & Break-Even page ask "if the price were X, what would a
+  // customer actually pay after everything stacks" through the real engine
+  // rather than a parallel approximation. Floor/ceiling still come from the
+  // catalog, so the safeguard clamp still reflects the real authored limits.
+  overridePrice?: number;
 }
 
 export interface ResolutionStep {

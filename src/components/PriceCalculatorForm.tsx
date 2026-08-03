@@ -8,10 +8,12 @@ import type { PresentationResult } from "@/lib/engine/presentation";
 import type { BasketResult } from "@/lib/engine/basket";
 import { Badge, Card } from "@/components/ui";
 import PresentationTile from "@/components/PresentationTile";
+import { PricingContextFields, type PricingContextValue } from "@/components/PricingContextFields";
 
 export interface SkuOption {
   id: string;
   label: string;
+  kvi?: boolean;
 }
 
 export default function PriceCalculatorForm({
@@ -28,16 +30,18 @@ export default function PriceCalculatorForm({
   const [lines, setLines] = useState<{ skuId: string; quantity: number }[]>([
     { skuId: initialSkuId ?? skuOptions[0]?.id ?? "", quantity: 1 },
   ]);
-  const [businessUnitId, setBusinessUnitId] = useState(businessUnits[0]?.id ?? "");
-  const [shopId, setShopId] = useState("");
-  const [market, setMarket] = useState("");
-  const [channel, setChannel] = useState("");
-  const [customerGroup, setCustomerGroup] = useState("");
-  const [printArea, setPrintArea] = useState("back");
-  const [printTechnique, setPrintTechnique] = useState("flex");
-  const [personalisation, setPersonalisation] = useState("");
-  const [design, setDesign] = useState("");
-  const [date, setDate] = useState("");
+  const [ctx, setCtx] = useState<PricingContextValue>({
+    businessUnitId: businessUnits[0]?.id ?? "",
+    shopId: "",
+    market: "",
+    channel: "",
+    customerGroup: "",
+    printArea: "back",
+    printTechnique: "flex",
+    personalisation: "",
+    design: "",
+    date: "",
+  });
   const [singleResult, setSingleResult] = useState<ResolvedPrice | null>(null);
   const [presentation, setPresentation] = useState<PresentationResult | null>(null);
   const [basketResult, setBasketResult] = useState<BasketResult | null>(null);
@@ -45,6 +49,10 @@ export default function PriceCalculatorForm({
   const [pending, startTransition] = useTransition();
 
   const isBasket = lines.length > 1;
+
+  function updateCtx(patch: Partial<PricingContextValue>) {
+    setCtx((c) => ({ ...c, ...patch }));
+  }
 
   function addLine() {
     setLines([...lines, { skuId: skuOptions[0]?.id ?? "", quantity: 1 }]);
@@ -56,16 +64,16 @@ export default function PriceCalculatorForm({
   function run() {
     startTransition(async () => {
       const shared = {
-        businessUnitId,
-        shopId: shopId || undefined,
-        market: market || undefined,
-        channel: channel || undefined,
-        customerGroup: customerGroup || undefined,
-        printArea: printArea || undefined,
-        printTechnique: printTechnique || undefined,
-        personalisation: personalisation || undefined,
-        design: design || undefined,
-        date: date ? `${date}:00Z` : undefined,
+        businessUnitId: ctx.businessUnitId,
+        shopId: ctx.shopId || undefined,
+        market: ctx.market || undefined,
+        channel: ctx.channel || undefined,
+        customerGroup: ctx.customerGroup || undefined,
+        printArea: ctx.printArea || undefined,
+        printTechnique: ctx.printTechnique || undefined,
+        personalisation: ctx.personalisation || undefined,
+        design: ctx.design || undefined,
+        date: ctx.date ? `${ctx.date}:00Z` : undefined,
       };
 
       if (isBasket) {
@@ -119,38 +127,13 @@ export default function PriceCalculatorForm({
             + add line {lines.length === 1 && "(turns this into a basket)"}
           </button>
 
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-black/10 dark:border-white/10">
-            <Field label="Business unit">
-              <select value={businessUnitId} onChange={(e) => setBusinessUnitId(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full">
-                {businessUnits.map((bu) => (
-                  <option key={bu.id} value={bu.id}>
-                    {bu.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Shop">
-              <select value={shopId} onChange={(e) => setShopId(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full">
-                <option value="">none (BU-wide)</option>
-                {shops.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Market"><input value={market} onChange={(e) => setMarket(e.target.value)} placeholder="DE" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Channel"><input value={channel} onChange={(e) => setChannel(e.target.value)} placeholder="web" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Customer group"><input value={customerGroup} onChange={(e) => setCustomerGroup(e.target.value)} placeholder="loyalty-gold" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="As-of date/time (UTC)"><input value={date} onChange={(e) => setDate(e.target.value)} type="datetime-local" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Print area"><input value={printArea} onChange={(e) => setPrintArea(e.target.value)} placeholder="back" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Print technique"><input value={printTechnique} onChange={(e) => setPrintTechnique(e.target.value)} placeholder="flex / embroidery" className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Personalisation"><input value={personalisation} onChange={(e) => setPersonalisation(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-            <Field label="Design"><input value={design} onChange={(e) => setDesign(e.target.value)} className="border rounded px-2 py-1 bg-transparent w-full" /></Field>
-          </div>
-          {lines.length > 1 && (
-            <p className="text-xs text-neutral-400">Print area/technique/personalisation/design apply to every line in a basket request.</p>
-          )}
+          <PricingContextFields
+            value={ctx}
+            onChange={updateCtx}
+            businessUnits={businessUnits}
+            shops={shops}
+            note={lines.length > 1 ? "Print area/technique/personalisation/design apply to every line in a basket request." : undefined}
+          />
           <button disabled={pending} onClick={run} className="rounded bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-3 py-1.5 mt-2">
             {pending ? "Resolving…" : isBasket ? "Resolve basket" : "Resolve price"}
           </button>
@@ -284,14 +267,5 @@ export default function PriceCalculatorForm({
         </Card>
       )}
     </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="block text-xs text-neutral-500 mb-0.5">{label}</span>
-      {children}
-    </label>
   );
 }
