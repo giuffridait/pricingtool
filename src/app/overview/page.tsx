@@ -67,6 +67,15 @@ export default async function OverviewPage({
         description="Coverage across the catalog: what's priced, what falls back to an inherited default, and the fully-resolved runtime price for the selected context."
       />
 
+      <a
+        href="https://claude.ai/code/artifact/dee0c2ac-5a3b-4388-921a-51325a842eb7"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block text-xs underline decoration-dotted text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300 mb-4"
+      >
+        Internal briefing deck: why SKU granularity still needs this whole pricing stack ↗
+      </a>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
         <Card title="Open alerts">
           <div className="flex gap-3 text-sm mb-3">
