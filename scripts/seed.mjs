@@ -206,6 +206,25 @@ const discounts = [
     id: "disc_phonecase_launch", name: "Clear case launch discount", type: "percentOff", value: 15,
     scope: { variantId: "var_phonecase_clear" }, eligibility: {}, stackingGroup: "launch", priority: 20, badge: "LAUNCH", versionId: "v_seed",
   },
+  // Catalog-scope stays empty on purpose - reached only through the rule's
+  // businessUnitId dimension, not through product/variant/sku matching.
+  {
+    id: "disc_marketplace_launch", name: "Marketplace BU launch discount", type: "percentOff", value: 10,
+    scope: {}, eligibility: {}, stackingGroup: "bu_launch", priority: 12, badge: "NEW", versionId: "v_seed",
+  },
+  // Same idea, one dimension narrower - shopId targets one storefront instead
+  // of "market": Germany Marketplace only, not the whole DE market (which
+  // also includes the Apparel BU's separate German store).
+  {
+    id: "disc_de_marketplace_kickoff", name: "Germany Marketplace kickoff discount", type: "percentOff", value: 12,
+    scope: {}, eligibility: {}, stackingGroup: "shop_kickoff", priority: 18, badge: "KICKOFF", versionId: "v_seed",
+  },
+  // Second SKU-level example, this time an applyDiscount rather than
+  // setPrice - a one-off clearance on a single slow-moving size.
+  {
+    id: "disc_hoodie_xl_clearance", name: "Classic Hoodie black XL clearance", type: "amountOff", value: 5,
+    scope: { skuId: "sku_hoodie_black_xl" }, eligibility: {}, stackingGroup: "clearance", priority: 30, badge: "CLEARANCE", versionId: "v_seed",
+  },
 ];
 
 // Mocked: in production these values would be read from an external Payout System.
@@ -297,12 +316,35 @@ const rules = [
     dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_phonecase_launch" },
     priority: 20, stackingGroup: "launch", versionId: "v_seed",
   },
-  // SKU-level override example - the only rule in this seed scoped that
-  // narrowly; viewing the "red / XXL" SKU in Guided Setup shows both this
-  // and the inherited product-level "Premium Tee base EU" rule together.
+  // SKU-level override example - viewing the "red / XXL" SKU in Guided Setup
+  // shows both this and the inherited product-level "Premium Tee base EU"
+  // rule together.
   {
     id: "rule_premium_tee_xxl_upcharge", name: "Premium Tee XXL upcharge", scope: { skuId: "sku_premium_tee_red_xxl" },
     dimensions: {}, effect: { type: "setPrice", price: 27 }, priority: 10, versionId: "v_seed",
+  },
+  // Second SKU-level example, and an applyDiscount rather than setPrice -
+  // shows a rule can be scoped this narrowly for any effect type, not just
+  // price overrides.
+  {
+    id: "rule_hoodie_xl_clearance", name: "Classic Hoodie black XL clearance", scope: { skuId: "sku_hoodie_black_xl" },
+    dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_hoodie_xl_clearance" },
+    priority: 30, stackingGroup: "clearance", versionId: "v_seed",
+  },
+  // businessUnitId dimension example - global catalog scope, reached only
+  // through the BU filter. No other rule in this seed uses businessUnitId
+  // or an empty catalog scope until this pair.
+  {
+    id: "rule_marketplace_bu_launch", name: "Marketplace BU launch discount", scope: {},
+    dimensions: { businessUnitId: "bu_marketplace" }, effect: { type: "applyDiscount", discountId: "disc_marketplace_launch" },
+    priority: 12, stackingGroup: "bu_launch", versionId: "v_seed",
+  },
+  // shopId dimension example - narrower than businessUnitId or market alone:
+  // this shop is the only one of the marketplace BU's two stores it applies to.
+  {
+    id: "rule_de_marketplace_kickoff", name: "Germany Marketplace kickoff discount", scope: {},
+    dimensions: { shopId: "shop_de_mp" }, effect: { type: "applyDiscount", discountId: "disc_de_marketplace_kickoff" },
+    priority: 18, stackingGroup: "shop_kickoff", versionId: "v_seed",
   },
 ];
 

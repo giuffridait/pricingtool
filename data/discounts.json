@@ -213,5 +213,43 @@
     "priority": 20,
     "badge": "LAUNCH",
     "versionId": "v_seed"
+  },
+  {
+    "id": "disc_marketplace_launch",
+    "name": "Marketplace BU launch discount",
+    "type": "percentOff",
+    "value": 10,
+    "scope": {},
+    "eligibility": {},
+    "stackingGroup": "bu_launch",
+    "priority": 12,
+    "badge": "NEW",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_de_marketplace_kickoff",
+    "name": "Germany Marketplace kickoff discount",
+    "type": "percentOff",
+    "value": 12,
+    "scope": {},
+    "eligibility": {},
+    "stackingGroup": "shop_kickoff",
+    "priority": 18,
+    "badge": "KICKOFF",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "disc_hoodie_xl_clearance",
+    "name": "Classic Hoodie black XL clearance",
+    "type": "amountOff",
+    "value": 5,
+    "scope": {
+      "skuId": "sku_hoodie_black_xl"
+    },
+    "eligibility": {},
+    "stackingGroup": "clearance",
+    "priority": 30,
+    "badge": "CLEARANCE",
+    "versionId": "v_seed"
   }
 ]
