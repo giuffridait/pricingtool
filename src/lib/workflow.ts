@@ -12,15 +12,25 @@ export interface WorkflowEntry {
 // collapsible tip under the page header. Purely advisory - nothing here is
 // enforced, it just helps someone find the next sensible page.
 export const WORKFLOW: Record<string, WorkflowEntry> = {
-  "/catalog": {
+  "/setup": {
     before: [],
+    after: [
+      { href: "/calculator", label: "Price Calculator" },
+      { href: "/bulk-operations", label: "Bulk Operations" },
+    ],
+  },
+  "/catalog": {
+    before: [{ href: "/setup", label: "Guided Setup" }],
     after: [
       { href: "/incentives", label: "Discounts & Incentives" },
       { href: "/calculator", label: "Price Calculator" },
     ],
   },
   "/incentives": {
-    before: [{ href: "/catalog", label: "Catalog & Pricing" }],
+    before: [
+      { href: "/setup", label: "Guided Setup" },
+      { href: "/catalog", label: "Catalog & Pricing" },
+    ],
     after: [
       { href: "/calendars", label: "Sales Calendar" },
       { href: "/calculator", label: "Price Calculator" },
@@ -45,11 +55,15 @@ export const WORKFLOW: Record<string, WorkflowEntry> = {
     after: [],
   },
   "/components": {
-    before: [{ href: "/catalog", label: "Catalog & Pricing" }],
+    before: [
+      { href: "/setup", label: "Guided Setup" },
+      { href: "/catalog", label: "Catalog & Pricing" },
+    ],
     after: [{ href: "/rules", label: "Rules" }],
   },
   "/rules": {
     before: [
+      { href: "/setup", label: "Guided Setup" },
       { href: "/components", label: "Components" },
       { href: "/catalog", label: "Catalog & Pricing" },
     ],

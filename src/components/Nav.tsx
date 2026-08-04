@@ -30,6 +30,7 @@ const groups: NavGroup[] = [
     label: "Price Setting",
     defaultOpen: true,
     links: [
+      { href: "/setup", label: "Guided Setup" },
       { href: "/catalog", label: "Catalog & Pricing" },
       { href: "/components", label: "Components" },
       { href: "/rules", label: "Rules" },

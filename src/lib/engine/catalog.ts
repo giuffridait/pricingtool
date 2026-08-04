@@ -1,6 +1,8 @@
 import type { ProductGroup, Product, Variant, Sku, PriceRole, PriceOverride } from "../types";
 import { productGroups, products, variants, skus } from "../repo";
 
+export { resolveScopeAncestors, scopeAppliesToAncestors, skusUnderScope, type ScopeAncestors } from "./scopeTree";
+
 // Resolves a SKU's full ancestor chain and the "dimension bag" (productType,
 // appearance, size) that catalog nodes contribute to rule/component matching.
 

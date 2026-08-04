@@ -19,6 +19,7 @@ export default function RuleEditor({
   components,
   commissions,
   calendars,
+  initialScopeId,
 }: {
   rules: PricingRule[];
   scopeOptions: ScopeOption[];
@@ -28,6 +29,7 @@ export default function RuleEditor({
   components: PriceComponent[];
   commissions: Commission[];
   calendars: PricingCalendar[];
+  initialScopeId?: string;
 }) {
   const [editing, setEditing] = useState<string | "new" | null>(null);
   const refs = { scopeOptions, businessUnits, shops, discounts, components, commissions, calendars };
@@ -43,7 +45,7 @@ export default function RuleEditor({
         )
       }
     >
-      {editing === "new" && <RuleForm {...refs} onDone={() => setEditing(null)} />}
+      {editing === "new" && <RuleForm {...refs} initialScopeId={initialScopeId} onDone={() => setEditing(null)} />}
       <div className="space-y-4 mt-2">
         {groupRules(rules, scopeOptions).map((group) => (
           <div key={group.key}>
@@ -181,6 +183,7 @@ function RuleForm({
   commissions,
   calendars,
   initial,
+  initialScopeId,
   onDone,
 }: {
   scopeOptions: ScopeOption[];
@@ -191,10 +194,13 @@ function RuleForm({
   commissions: Commission[];
   calendars: PricingCalendar[];
   initial?: PricingRule;
+  initialScopeId?: string;
   onDone: () => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
-  const [scopeId, setScopeId] = useState(initial?.scope.skuId ?? initial?.scope.variantId ?? initial?.scope.productId ?? initial?.scope.productGroupId ?? "");
+  const [scopeId, setScopeId] = useState(
+    initial?.scope.skuId ?? initial?.scope.variantId ?? initial?.scope.productId ?? initial?.scope.productGroupId ?? initialScopeId ?? "",
+  );
   const [businessUnitId, setBusinessUnitId] = useState(initial?.dimensions.businessUnitId ?? "");
   const [shopId, setShopId] = useState(initial?.dimensions.shopId ?? "");
   const [market, setMarket] = useState(initial?.dimensions.market ?? "");
