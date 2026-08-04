@@ -8,7 +8,7 @@ import { saveVersioned, deleteVersioned } from "./helpers";
 import { resolvePrice } from "../engine/price";
 import { buildPresentation } from "../engine/presentation";
 import { loadCatalog } from "../engine/catalog";
-import { discounts, presentationPolicies } from "../repo";
+import { discounts, presentationPolicies, historicalMetrics } from "../repo";
 
 export interface PresentationPolicyInput {
   id?: string;
@@ -22,6 +22,7 @@ export interface PresentationPolicyInput {
   showDiscountBadge: boolean;
   showFromPrice: boolean;
   showNextTierMessage: boolean;
+  showOmnibusReference: boolean;
 }
 
 export async function savePresentationPolicyAction(input: PresentationPolicyInput) {
@@ -41,6 +42,7 @@ export async function savePresentationPolicyAction(input: PresentationPolicyInpu
       showDiscountBadge: input.showDiscountBadge,
       showFromPrice: input.showFromPrice,
       showNextTierMessage: input.showNextTierMessage,
+      showOmnibusReference: input.showOmnibusReference,
       versionId,
     }),
     { note: `Saved presentation policy "${input.name}"` },
@@ -63,7 +65,12 @@ export async function previewFromPriceAction(
   shared: Omit<PricingContext, "skuId">,
 ): Promise<{ presentation?: PresentationResult; skuId?: string; error?: string }> {
   try {
-    const [catalog, allDiscounts, allPolicies] = await Promise.all([loadCatalog(), discounts.all(), presentationPolicies.all()]);
+    const [catalog, allDiscounts, allPolicies, allHistory] = await Promise.all([
+      loadCatalog(),
+      discounts.all(),
+      presentationPolicies.all(),
+      historicalMetrics.all(),
+    ]);
     const productSkus = catalog.skus.filter((sku) => {
       const variant = catalog.variants.find((v) => v.id === sku.variantId);
       return variant?.productId === productId;
@@ -84,7 +91,14 @@ export async function previewFromPriceAction(
       const product = catalog.products.find((p) => p.id === node.productId);
       if (!product) continue;
       const ids = { productGroupId: product.productGroupId, productId: product.id, variantId: node.id, skuId: sku.id };
-      const presentation = await buildPresentation(resolved, ids, allDiscounts, { market: shared.market, customerGroup: shared.customerGroup, date: shared.date, quantity: shared.quantity }, policy);
+      const presentation = await buildPresentation(
+        resolved,
+        ids,
+        allDiscounts,
+        allHistory,
+        { market: shared.market, customerGroup: shared.customerGroup, date: shared.date, quantity: shared.quantity },
+        policy,
+      );
       if (!cheapest || presentation.displayPrice < cheapest.presentation.displayPrice) {
         cheapest = { presentation, skuId: sku.id };
       }

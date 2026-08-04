@@ -1,4 +1,4 @@
-import type { PresentationPolicy, Discount, ResolvedPrice } from "../types";
+import type { PresentationPolicy, Discount, ResolvedPrice, HistoricalMetric } from "../types";
 import { scopeSpecificity } from "./scope";
 import { isWithinValidity } from "./match";
 import { isWithinCalendar } from "./calendar";
@@ -16,7 +16,26 @@ export interface PresentationResult {
   strikethrough?: number;
   badge?: string;
   percentOff?: number;
+  // EU Omnibus: the lowest recorded price in the reference window, and
+  // whether the naive RRP-based strikethrough had to be corrected or
+  // dropped to keep the "was" claim compliant with it.
+  omnibusReference?: number;
+  omnibusAdjusted?: boolean;
   messages: string[];
+}
+
+// EU Omnibus Directive: a "was X now Y" claim must reference the lowest
+// price charged in the preceding 30 days, not an arbitrary RRP. Price
+// history here is monthly, not daily - each entry already represents "the
+// price during that month," so the most recent month at or before the
+// as-of date is the honest proxy for "lowest price in the last 30 days"
+// (a wider lookback would overstate the window Omnibus actually asks for).
+function computeOmnibusReference(metrics: HistoricalMetric[], skuId: string, asOfDate?: string): number | undefined {
+  const asOfMonth = (asOfDate ?? new Date().toISOString()).slice(0, 7);
+  const priorMonths = metrics
+    .filter((m) => m.skuId === skuId && m.month <= asOfMonth)
+    .sort((a, b) => b.month.localeCompare(a.month));
+  return priorMonths[0]?.price;
 }
 
 export function roundForDisplay(price: number, policy?: PresentationPolicy): number {
@@ -57,6 +76,7 @@ export async function buildPresentation(
   resolved: ResolvedPrice,
   ids: ReturnType<typeof nodeIds>,
   allDiscounts: Discount[],
+  historicalMetrics: HistoricalMetric[],
   ctx: { market?: string; customerGroup?: string; date?: string; quantity?: number },
   policy?: PresentationPolicy,
 ): Promise<PresentationResult> {
@@ -68,9 +88,30 @@ export async function buildPresentation(
   const showStrike = policy?.showRrpStrikethrough ?? true;
   const showBadge = policy?.showDiscountBadge ?? true;
   const showMessages = policy?.showNextTierMessage ?? true;
+  const showOmnibus = policy?.showOmnibusReference ?? true;
 
-  const strikethrough = showStrike && displayPrice < rrp ? rrp : undefined;
-  const percentOff = strikethrough ? ((rrp - displayPrice) / rrp) * 100 : undefined;
+  let strikethrough = showStrike && displayPrice < rrp ? rrp : undefined;
+  let percentOff = strikethrough ? ((rrp - displayPrice) / rrp) * 100 : undefined;
+
+  let omnibusReference: number | undefined;
+  let omnibusAdjusted = false;
+  if (showOmnibus && strikethrough !== undefined) {
+    omnibusReference = computeOmnibusReference(historicalMetrics, ids.skuId, ctx.date);
+    if (omnibusReference !== undefined && omnibusReference < strikethrough) {
+      if (displayPrice < omnibusReference) {
+        // Genuine discount vs. the true recent low - just correct the "was" price.
+        strikethrough = roundForDisplay(omnibusReference, policy);
+        percentOff = ((strikethrough - displayPrice) / strikethrough) * 100;
+      } else {
+        // Not actually below the lowest recent price - no compliant claim to make.
+        // (Explained via omnibusReference/omnibusAdjusted rather than pushed into
+        // `messages`, which is reserved for celebratory savings/next-tier copy.)
+        strikethrough = undefined;
+        percentOff = undefined;
+      }
+      omnibusAdjusted = true;
+    }
+  }
 
   let badge: string | undefined;
   if (showBadge) {
@@ -112,6 +153,8 @@ export async function buildPresentation(
     strikethrough,
     badge,
     percentOff,
+    omnibusReference,
+    omnibusAdjusted,
     messages,
   };
 }

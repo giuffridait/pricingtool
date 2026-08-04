@@ -10,7 +10,8 @@
     "showDiscountBadge": true,
     "showFromPrice": true,
     "showNextTierMessage": true,
-    "versionId": "v_seed"
+    "versionId": "v_seed",
+    "showOmnibusReference": true
   },
   {
     "id": "pp_marketplace",
@@ -22,6 +23,7 @@
     "showDiscountBadge": true,
     "showFromPrice": true,
     "showNextTierMessage": false,
-    "versionId": "v_seed"
+    "versionId": "v_seed",
+    "showOmnibusReference": true
   }
 ]

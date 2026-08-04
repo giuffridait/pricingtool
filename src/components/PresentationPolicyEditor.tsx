@@ -47,6 +47,7 @@ export default function PresentationPolicyEditor({
                     p.showDiscountBadge && "badge",
                     p.showFromPrice && "from-price",
                     p.showNextTierMessage && "savings messages",
+                    p.showOmnibusReference && "Omnibus check",
                   ]
                     .filter(Boolean)
                     .join(", ") || "no presentation extras"}
@@ -96,6 +97,7 @@ function PolicyForm({
   const [showDiscountBadge, setShowDiscountBadge] = useState(initial?.showDiscountBadge ?? true);
   const [showFromPrice, setShowFromPrice] = useState(initial?.showFromPrice ?? true);
   const [showNextTierMessage, setShowNextTierMessage] = useState(initial?.showNextTierMessage ?? true);
+  const [showOmnibusReference, setShowOmnibusReference] = useState(initial?.showOmnibusReference ?? true);
   const [pending, startTransition] = useTransition();
 
   function submit() {
@@ -112,6 +114,7 @@ function PolicyForm({
         showDiscountBadge,
         showFromPrice,
         showNextTierMessage,
+        showOmnibusReference,
       });
       onDone();
     });
@@ -165,6 +168,9 @@ function PolicyForm({
         </label>
         <label className="flex items-center gap-1">
           <input type="checkbox" checked={showNextTierMessage} onChange={(e) => setShowNextTierMessage(e.target.checked)} /> savings messages
+        </label>
+        <label className="flex items-center gap-1">
+          <input type="checkbox" checked={showOmnibusReference} onChange={(e) => setShowOmnibusReference(e.target.checked)} /> EU Omnibus check
         </label>
       </div>
 

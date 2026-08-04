@@ -242,6 +242,10 @@ export interface PresentationPolicy {
   showDiscountBadge: boolean;
   showFromPrice: boolean;
   showNextTierMessage: boolean;
+  // EU Omnibus Directive: a "was/now" claim must reference the lowest price
+  // charged in the preceding 30 days, not an arbitrary RRP. When on, the
+  // strikethrough is checked against price history and corrected or dropped.
+  showOmnibusReference: boolean;
   versionId: ID;
 }
 
@@ -496,18 +500,13 @@ export interface ResolvedPrice {
   warnings: string[];
 }
 
-// Read-only historical analytics - synthetic seeded data in this prototype,
+// Read-only price history - synthetic seeded data in this prototype,
 // standing in for what would otherwise come from an orders/BI system.
+// Powers both the Historical Prices page and the Omnibus reference price
+// used by the presentation engine.
 export interface HistoricalMetric {
   skuId: ID;
   month: string; // "YYYY-MM"
   currency: string;
   price: number;
-  units: number;
-  revenue: number;
-  discountRate: number; // percent
-  contribution: number; // revenue * margin
-  margin: number; // percent
-  returns: number; // units returned
-  commissions: number;
 }

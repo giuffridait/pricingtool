@@ -1,7 +1,7 @@
 import type { PresentationResult } from "@/lib/engine/presentation";
 
 export default function PresentationTile({ presentation, fromLabel }: { presentation: PresentationResult; fromLabel?: boolean }) {
-  const { currency, displayPrice, strikethrough, badge, messages } = presentation;
+  const { currency, displayPrice, strikethrough, badge, messages, omnibusReference, omnibusAdjusted } = presentation;
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 max-w-xs mx-auto text-center bg-white dark:bg-neutral-900">
       <div className="h-20 rounded bg-black/5 dark:bg-white/5 mb-3 flex items-center justify-center text-neutral-400 text-xs">
@@ -28,6 +28,13 @@ export default function PresentationTile({ presentation, fromLabel }: { presenta
               {m}
             </div>
           ))}
+        </div>
+      )}
+      {omnibusAdjusted && (
+        <div className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+          {strikethrough !== undefined
+            ? `"Was" price adjusted to the lowest price in the last 30 days (EU Omnibus).`
+            : `No "was" price shown: ${currency} ${displayPrice.toFixed(2)} isn't below the lowest price in the last 30 days (${currency} ${omnibusReference?.toFixed(2)}), per EU Omnibus rules.`}
         </div>
       )}
     </div>

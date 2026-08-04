@@ -5,7 +5,7 @@ import type { PresentationResult } from "../engine/presentation";
 import { resolvePrice } from "../engine/price";
 import { buildPresentation } from "../engine/presentation";
 import { loadCatalog, resolveNode, nodeIds } from "../engine/catalog";
-import { discounts, presentationPolicies } from "../repo";
+import { discounts, presentationPolicies, historicalMetrics } from "../repo";
 
 export async function calculatePriceAction(
   ctx: PricingContext,
@@ -13,7 +13,12 @@ export async function calculatePriceAction(
   try {
     const result = await resolvePrice(ctx);
 
-    const [catalog, allDiscounts, allPolicies] = await Promise.all([loadCatalog(), discounts.all(), presentationPolicies.all()]);
+    const [catalog, allDiscounts, allPolicies, allHistory] = await Promise.all([
+      loadCatalog(),
+      discounts.all(),
+      presentationPolicies.all(),
+      historicalMetrics.all(),
+    ]);
     const node = resolveNode(catalog, ctx.skuId);
     const ids = node ? nodeIds(node) : null;
 
@@ -24,7 +29,14 @@ export async function calculatePriceAction(
     const policy = candidates[0];
 
     const presentation = ids
-      ? await buildPresentation(result, ids, allDiscounts, { market: ctx.market, customerGroup: ctx.customerGroup, date: ctx.date, quantity: ctx.quantity }, policy)
+      ? await buildPresentation(
+          result,
+          ids,
+          allDiscounts,
+          allHistory,
+          { market: ctx.market, customerGroup: ctx.customerGroup, date: ctx.date, quantity: ctx.quantity },
+          policy,
+        )
       : undefined;
 
     return { result, presentation };

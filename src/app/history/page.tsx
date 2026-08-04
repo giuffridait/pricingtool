@@ -34,7 +34,7 @@ export default async function HistoryPage({
     <div>
       <PageHeader
         title="Historical price explorer"
-        description="Historical price, units, revenue, discount rate, contribution, margin, returns, and commissions by SKU. This prototype has no real order history, so the numbers are synthetically generated per SKU across the last 6 months (not broken out by market/channel)."
+        description="Month-by-month price by SKU. This prototype has no real order history, so prices are synthetically generated per SKU across the last 6 months (not broken out by market/channel). This is the same data the presentation engine checks against for EU Omnibus-compliant 'was' pricing — see Storefront Display."
         path="/history"
       />
 
@@ -80,13 +80,6 @@ export default async function HistoryPage({
                   <th className="p-2">Product</th>
                   <th className="p-2">SKU</th>
                   <th className="p-2">Price</th>
-                  <th className="p-2">Units</th>
-                  <th className="p-2">Revenue</th>
-                  <th className="p-2">Discount %</th>
-                  <th className="p-2">Margin %</th>
-                  <th className="p-2">Contribution</th>
-                  <th className="p-2">Returns</th>
-                  <th className="p-2">Commissions</th>
                 </tr>
               </thead>
               <tbody>
@@ -98,13 +91,6 @@ export default async function HistoryPage({
                       <td className="p-2">{meta.product.name}</td>
                       <td className="p-2">{meta.variant.name} — {meta.sku.name}</td>
                       <td className="p-2">{m.currency} {m.price.toFixed(2)}</td>
-                      <td className="p-2">{m.units}</td>
-                      <td className="p-2">{m.currency} {m.revenue.toFixed(2)}</td>
-                      <td className="p-2">{m.discountRate.toFixed(1)}%</td>
-                      <td className="p-2">{m.margin.toFixed(1)}%</td>
-                      <td className="p-2">{m.currency} {m.contribution.toFixed(2)}</td>
-                      <td className="p-2">{m.returns}</td>
-                      <td className="p-2">{m.currency} {m.commissions.toFixed(2)}</td>
                     </tr>
                   );
                 })}

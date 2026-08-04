@@ -23,7 +23,7 @@ export default async function PresentationPage() {
     <div className="space-y-6">
       <PageHeader
         title="Storefront display"
-        description="Presentation is configured separately from the paid price: RRP strikethrough, discount badges, psychological rounding, and savings messaging. A policy controls how a resolved price gets displayed - it never changes what's actually charged."
+        description="Presentation is configured separately from the paid price: RRP strikethrough, discount badges, psychological rounding, and savings messaging. A policy controls how a resolved price gets displayed - it never changes what's actually charged. When the EU Omnibus check is on, any 'was' price is verified against the lowest price in the last 30 days (from Historical Prices) and corrected or dropped if it wouldn't hold up."
         path="/presentation"
       />
       <PresentationPolicyEditor policies={policies} businessUnits={bus} shops={allShops} />

@@ -313,12 +313,12 @@ const presentationPolicies = [
   {
     id: "pp_apparel", name: "Apparel (EUR, charm pricing)", businessUnitId: "bu_apparel", currency: "EUR",
     roundingMode: "charm", charmEnding: 0.9,
-    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: true, versionId: "v_seed",
+    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: true, showOmnibusReference: true, versionId: "v_seed",
   },
   {
     id: "pp_marketplace", name: "Marketplace (EUR, whole numbers)", businessUnitId: "bu_marketplace", currency: "EUR",
     roundingMode: "nearestInteger",
-    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: false, versionId: "v_seed",
+    showRrpStrikethrough: true, showDiscountBadge: true, showFromPrice: true, showNextTierMessage: false, showOmnibusReference: true, versionId: "v_seed",
   },
 ];
 
@@ -397,14 +397,7 @@ const historicalMetrics = skus.flatMap((sku) => {
   return HISTORY_MONTHS.map((month) => {
     const priceVariance = 0.95 + rand() * 0.1;
     const price = Math.round(assumedPrice * priceVariance * 100) / 100;
-    const units = Math.round(20 + rand() * 280);
-    const discountRate = Math.round(rand() * 20 * 10) / 10;
-    const revenue = Math.round(units * price * (1 - discountRate / 100) * 100) / 100;
-    const margin = Math.round(((price - sku.costBasis) / price) * 100 * 10) / 10;
-    const contribution = Math.round(revenue * (margin / 100) * 100) / 100;
-    const returns = Math.round(units * rand() * 0.08);
-    const commissions = Math.round(revenue * 0.05 * 100) / 100;
-    return { skuId: sku.id, month, currency: "EUR", price, units, revenue, discountRate, contribution, margin, returns, commissions };
+    return { skuId: sku.id, month, currency: "EUR", price };
   });
 });
 
