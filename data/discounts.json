@@ -128,22 +128,6 @@
     "versionId": "v_seed"
   },
   {
-    "id": "disc_loyalty_gold",
-    "name": "Loyalty Gold",
-    "type": "percentOff",
-    "value": 5,
-    "scope": {},
-    "eligibility": {
-      "customerGroups": [
-        "loyalty-gold"
-      ]
-    },
-    "stackingGroup": "loyalty",
-    "priority": 90,
-    "badge": "LOYALTY",
-    "versionId": "v_seed"
-  },
-  {
     "id": "disc_volume_core_tee",
     "name": "Core tee volume discount",
     "type": "volumeTier",

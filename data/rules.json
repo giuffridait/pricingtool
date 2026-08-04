@@ -32,24 +32,6 @@
     "versionId": "v_seed"
   },
   {
-    "id": "rule_loyalty_gold",
-    "name": "Loyalty Gold -5%",
-    "scope": {},
-    "dimensions": {
-      "customerGroup": "loyalty-gold"
-    },
-    "effect": {
-      "type": "applyDiscount",
-      "discountId": "disc_loyalty_gold"
-    },
-    "priority": 90,
-    "stackingGroup": "loyalty",
-    "exclusionGroups": [
-      "seasonal"
-    ],
-    "versionId": "v_seed"
-  },
-  {
     "id": "rule_hoodie_seasonal_sale",
     "name": "Hoodie Summer Sale",
     "scope": {
@@ -249,6 +231,22 @@
       "price": 27
     },
     "priority": 10,
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_premium_tee_loyalty_price",
+    "name": "Premium Tee loyalty gold price",
+    "scope": {
+      "productId": "prod_premium_tee"
+    },
+    "dimensions": {
+      "customerGroup": "loyalty-gold"
+    },
+    "effect": {
+      "type": "setPrice",
+      "price": 20
+    },
+    "priority": 95,
     "versionId": "v_seed"
   }
 ]

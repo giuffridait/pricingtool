@@ -179,11 +179,6 @@ const discounts = [
     bogo: { buyQty: 3, payQty: 2, cheapestFree: true },
     scope: { productId: "prod_premium_tee" }, eligibility: {}, stackingGroup: "multibuy", priority: 20, versionId: "v_seed",
   },
-  {
-    id: "disc_loyalty_gold", name: "Loyalty Gold", type: "percentOff", value: 5,
-    scope: {}, eligibility: { customerGroups: ["loyalty-gold"] },
-    stackingGroup: "loyalty", priority: 90, badge: "LOYALTY", versionId: "v_seed",
-  },
   // Overlapping tiers (both start at qty 10) - left in deliberately so the
   // cross-SKU sanity check has something to detect.
   {
@@ -231,10 +226,15 @@ const rules = [
     dimensions: { market: "DE" }, effect: { type: "setPrice", price: 22 }, priority: 100,
     validFrom: "2026-06-01", validTo: "2026-06-15", versionId: "v_seed",
   },
+  // Directly contradicts "Premium Tee base EU" below: same product, no
+  // narrower dimension than customerGroup, so a loyalty-gold shopper is
+  // eligible for both setPrice rules at once - priority (95 > 10) is the
+  // only thing deciding which one actually wins. (A loyalty-gold shopper
+  // in DE during the June sale window is eligible for three at once - see
+  // "Premium Tee DE sale" further down, priority 100.)
   {
-    id: "rule_loyalty_gold", name: "Loyalty Gold -5%", scope: {},
-    dimensions: { customerGroup: "loyalty-gold" }, effect: { type: "applyDiscount", discountId: "disc_loyalty_gold" },
-    priority: 90, stackingGroup: "loyalty", exclusionGroups: ["seasonal"], versionId: "v_seed",
+    id: "rule_premium_tee_loyalty_price", name: "Premium Tee loyalty gold price", scope: { productId: "prod_premium_tee" },
+    dimensions: { customerGroup: "loyalty-gold" }, effect: { type: "setPrice", price: 20 }, priority: 95, versionId: "v_seed",
   },
   {
     id: "rule_hoodie_seasonal_sale", name: "Hoodie Summer Sale", scope: { productGroupId: "pg_hoodies" },
