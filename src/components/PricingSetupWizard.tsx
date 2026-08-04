@@ -15,7 +15,7 @@ import type {
   ResolvedPrice,
 } from "@/lib/types";
 import type { PresentationResult } from "@/lib/engine/presentation";
-import { resolveScopeAncestors, scopeAppliesToAncestors, skusUnderScope, type CatalogIndexLike } from "@/lib/engine/scopeTree";
+import { resolveScopeAncestors, scopeAppliesToAncestors, skusUnderScope, pickDiverseSkus, type CatalogIndexLike } from "@/lib/engine/scopeTree";
 import { calculatePriceAction } from "@/lib/actions/calculator";
 import { Card, Badge } from "@/components/ui";
 import RuleEditor from "@/components/RuleEditor";
@@ -154,9 +154,10 @@ export default function PricingSetupWizard({
             <p className="text-xs text-neutral-500 mb-2">
               Runs the real pricing engine for {sampleSkus.length > 3 ? "a sample of " : ""}
               {Math.min(sampleSkus.length, 3)} of the {sampleSkus.length} SKU{sampleSkus.length === 1 ? "" : "s"} under{" "}
-              <strong>{scope.label}</strong>, so you see the actual effect of what&apos;s configured above - not a separate estimate.
+              <strong>{scope.label}</strong>, so you see the actual effect of what&apos;s configured above - not a separate estimate. Picked
+              for variety by default; swap any slot to check a specific SKU.
             </p>
-            <LivePreview skus={sampleSkus.slice(0, 3)} catalog={catalog} businessUnitId={businessUnitId} shopId={shopId} />
+            <LivePreview key={scope.id} allSkus={sampleSkus} catalog={catalog} businessUnitId={businessUnitId} shopId={shopId} />
           </Card>
 
           <Card title="6. Scaling to the rest of the catalog">
@@ -177,32 +178,39 @@ export default function PricingSetupWizard({
 }
 
 function LivePreview({
-  skus,
+  allSkus,
   catalog,
   businessUnitId,
   shopId,
 }: {
-  skus: Sku[];
+  allSkus: Sku[];
   catalog: CatalogIndexLike;
   businessUnitId: string;
   shopId: string;
 }) {
+  const defaultPicks = useMemo(() => pickDiverseSkus(allSkus, catalog, 3).map((s) => s.id), [allSkus, catalog]);
+  const [selectedIds, setSelectedIds] = useState<string[]>(defaultPicks);
   const [results, setResults] = useState<Record<string, { result?: ResolvedPrice; presentation?: PresentationResult; error?: string }>>({});
   const [pending, startTransition] = useTransition();
+
+  function swap(index: number, skuId: string) {
+    setSelectedIds((ids) => ids.map((id, i) => (i === index ? skuId : id)));
+    setResults({});
+  }
 
   function run() {
     startTransition(async () => {
       const entries = await Promise.all(
-        skus.map(async (sku) => {
-          const r = await calculatePriceAction({ skuId: sku.id, businessUnitId, shopId: shopId || undefined, quantity: 1 });
-          return [sku.id, r] as const;
+        selectedIds.map(async (skuId) => {
+          const r = await calculatePriceAction({ skuId, businessUnitId, shopId: shopId || undefined, quantity: 1 });
+          return [skuId, r] as const;
         }),
       );
       setResults(Object.fromEntries(entries));
     });
   }
 
-  if (skus.length === 0) {
+  if (allSkus.length === 0) {
     return <p className="text-xs text-neutral-500 italic">No SKUs under this scope yet.</p>;
   }
 
@@ -216,17 +224,25 @@ function LivePreview({
         {pending ? "Resolving…" : "Run live preview"}
       </button>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {skus.map((sku) => {
-          const entry = results[sku.id];
+        {selectedIds.map((skuId, i) => {
+          const entry = results[skuId];
           return (
-            <div key={sku.id} className="space-y-1.5">
-              <div className="text-xs text-neutral-500 truncate" title={labelForSku(catalog, sku.id)}>
-                {labelForSku(catalog, sku.id)}
-              </div>
+            <div key={i} className="space-y-1.5">
+              <select
+                value={skuId}
+                onChange={(e) => swap(i, e.target.value)}
+                className="w-full border rounded px-1 py-0.5 bg-transparent text-xs"
+              >
+                {allSkus.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {labelForSku(catalog, s.id)}
+                  </option>
+                ))}
+              </select>
               {entry?.error && <Badge tone="critical">{entry.error}</Badge>}
               {entry?.presentation && <PresentationTile presentation={entry.presentation} />}
               {entry?.result && (
-                <Link href={`/calculator?skuId=${sku.id}`} className="text-xs underline text-neutral-500 block text-center">
+                <Link href={`/calculator?skuId=${skuId}`} className="text-xs underline text-neutral-500 block text-center">
                   full trace →
                 </Link>
               )}

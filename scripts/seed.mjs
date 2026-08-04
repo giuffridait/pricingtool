@@ -205,6 +205,12 @@ const discounts = [
     id: "disc_tote_promo", name: "Tote intro discount", type: "amountOff", value: 2,
     scope: { productId: "prod_tote" }, eligibility: {}, stackingGroup: "tote_promo", priority: 15, versionId: "v_seed",
   },
+  // Variant-level example - every other discount here is scoped at productGroup
+  // or product; this is the one demonstrating "narrower than product" scoping.
+  {
+    id: "disc_phonecase_launch", name: "Clear case launch discount", type: "percentOff", value: 15,
+    scope: { variantId: "var_phonecase_clear" }, eligibility: {}, stackingGroup: "launch", priority: 20, badge: "LAUNCH", versionId: "v_seed",
+  },
 ];
 
 // Mocked: in production these values would be read from an external Payout System.
@@ -285,6 +291,18 @@ const rules = [
     id: "rule_tote_promo", name: "Tote intro promo", scope: { productId: "prod_tote" },
     dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_tote_promo" },
     priority: 15, stackingGroup: "tote_promo", versionId: "v_seed",
+  },
+  {
+    id: "rule_phonecase_launch", name: "Clear case launch promo", scope: { variantId: "var_phonecase_clear" },
+    dimensions: {}, effect: { type: "applyDiscount", discountId: "disc_phonecase_launch" },
+    priority: 20, stackingGroup: "launch", versionId: "v_seed",
+  },
+  // SKU-level override example - the only rule in this seed scoped that
+  // narrowly; viewing the "red / XXL" SKU in Guided Setup shows both this
+  // and the inherited product-level "Premium Tee base EU" rule together.
+  {
+    id: "rule_premium_tee_xxl_upcharge", name: "Premium Tee XXL upcharge", scope: { skuId: "sku_premium_tee_red_xxl" },
+    dimensions: {}, effect: { type: "setPrice", price: 27 }, priority: 10, versionId: "v_seed",
   },
 ];
 

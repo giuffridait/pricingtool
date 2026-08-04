@@ -215,5 +215,19 @@
     "stackingGroup": "tote_promo",
     "priority": 15,
     "versionId": "v_seed"
+  },
+  {
+    "id": "disc_phonecase_launch",
+    "name": "Clear case launch discount",
+    "type": "percentOff",
+    "value": 15,
+    "scope": {
+      "variantId": "var_phonecase_clear"
+    },
+    "eligibility": {},
+    "stackingGroup": "launch",
+    "priority": 20,
+    "badge": "LAUNCH",
+    "versionId": "v_seed"
   }
 ]

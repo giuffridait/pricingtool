@@ -221,5 +221,34 @@
     "priority": 15,
     "stackingGroup": "tote_promo",
     "versionId": "v_seed"
+  },
+  {
+    "id": "rule_phonecase_launch",
+    "name": "Clear case launch promo",
+    "scope": {
+      "variantId": "var_phonecase_clear"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "applyDiscount",
+      "discountId": "disc_phonecase_launch"
+    },
+    "priority": 20,
+    "stackingGroup": "launch",
+    "versionId": "v_seed"
+  },
+  {
+    "id": "rule_premium_tee_xxl_upcharge",
+    "name": "Premium Tee XXL upcharge",
+    "scope": {
+      "skuId": "sku_premium_tee_red_xxl"
+    },
+    "dimensions": {},
+    "effect": {
+      "type": "setPrice",
+      "price": 27
+    },
+    "priority": 10,
+    "versionId": "v_seed"
   }
 ]

@@ -69,3 +69,39 @@ export function skusUnderScope(catalog: CatalogIndexLike, level: CatalogLevel, i
   const variantIds = new Set(catalog.variants.filter((v) => productIds.has(v.productId)).map((v) => v.id));
   return catalog.skus.filter((s) => variantIds.has(s.variantId));
 }
+
+// Picks up to n SKUs favoring variety over the catalog's natural array order
+// (which tends to cluster same-product, same-variant, different-size SKUs
+// that all price identically) - one per distinct product first, then one per
+// distinct variant, then whatever's left. Meant as a starting point for a
+// live preview; callers can still let someone override the picks.
+export function pickDiverseSkus(skus: Sku[], catalog: CatalogIndexLike, n: number): Sku[] {
+  if (skus.length <= n) return skus;
+  const variantToProduct = new Map(catalog.variants.map((v) => [v.id, v.productId]));
+  const picked: Sku[] = [];
+  const seenProducts = new Set<string>();
+  const seenVariants = new Set<string>();
+
+  for (const sku of skus) {
+    if (picked.length >= n) break;
+    const productId = variantToProduct.get(sku.variantId);
+    if (productId && !seenProducts.has(productId)) {
+      seenProducts.add(productId);
+      seenVariants.add(sku.variantId);
+      picked.push(sku);
+    }
+  }
+  for (const sku of skus) {
+    if (picked.length >= n) break;
+    if (picked.includes(sku)) continue;
+    if (!seenVariants.has(sku.variantId)) {
+      seenVariants.add(sku.variantId);
+      picked.push(sku);
+    }
+  }
+  for (const sku of skus) {
+    if (picked.length >= n) break;
+    if (!picked.includes(sku)) picked.push(sku);
+  }
+  return picked;
+}

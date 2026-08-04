@@ -225,6 +225,28 @@ function RuleForm({
     return { [`${opt.level}Id`]: opt.id };
   }
 
+  // Quick-start presets for a blank form - only setPrice/applyDiscount, since
+  // those are the only effect types the engine actually consumes (applyComponent
+  // and applyCommission are selectable below but currently have no effect on
+  // any resolved price - components apply purely by dimension match, and
+  // commissions aren't wired into resolution at all). Falls back to any
+  // existing discount if none of the target type exist yet, so there's always
+  // a working starting point to edit rather than a dead reference.
+  function applyTemplate(kind: "setPrice" | "percentOff" | "volumeTier" | "bogo") {
+    if (kind === "setPrice") {
+      setEffectType("setPrice");
+      setName((n) => n || "New base price");
+      setPriority("10");
+      return;
+    }
+    const match = discounts.find((d) => d.type === kind) ?? discounts[0];
+    setEffectType("applyDiscount");
+    if (match) setDiscountId(match.id);
+    setName((n) => n || (match ? `New rule using "${match.name}"` : "New discount rule"));
+    setPriority(kind === "volumeTier" ? "10" : "20");
+    setStackingGroup(kind === "volumeTier" ? "volume" : kind === "bogo" ? "multibuy" : "promo");
+  }
+
   function submit() {
     startTransition(async () => {
       await saveRuleAction({
@@ -258,6 +280,23 @@ function RuleForm({
 
   return (
     <div className="bg-black/5 dark:bg-white/5 rounded p-2 text-xs space-y-1.5">
+      {!initial && (
+        <div className="flex flex-wrap gap-1.5 items-center border-b border-black/10 dark:border-white/10 pb-1.5">
+          <span className="text-neutral-500">quick start:</span>
+          <button type="button" onClick={() => applyTemplate("setPrice")} className="underline text-neutral-600 dark:text-neutral-300">
+            Set a price
+          </button>
+          <button type="button" onClick={() => applyTemplate("percentOff")} className="underline text-neutral-600 dark:text-neutral-300">
+            % off
+          </button>
+          <button type="button" onClick={() => applyTemplate("volumeTier")} className="underline text-neutral-600 dark:text-neutral-300">
+            Volume discount
+          </button>
+          <button type="button" onClick={() => applyTemplate("bogo")} className="underline text-neutral-600 dark:text-neutral-300">
+            Buy X get Y free
+          </button>
+        </div>
+      )}
       <div className="flex flex-wrap gap-1.5">
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="name" className="border rounded px-1 py-0.5 bg-transparent w-44" />
         <select value={scopeId} onChange={(e) => setScopeId(e.target.value)} className="border rounded px-1 py-0.5 bg-transparent">
