@@ -25,6 +25,7 @@ const groups: NavGroup[] = [
     label: null,
     defaultOpen: true,
     links: [
+      { href: "/guide", label: "Guide" },
       { href: "/overview", label: "Overview" },
       { href: "/setup", label: "Guided Setup" },
     ],
@@ -57,7 +58,6 @@ const groups: NavGroup[] = [
     links: [
       { href: "/alerts", label: "Alerts" },
       { href: "/checks", label: "Consistency & Sanity" },
-      { href: "/whatif", label: "What-If & Break-Even" },
       { href: "/versions", label: "Versions" },
       { href: "/experiments", label: "Experiments" },
       { href: "/history", label: "Historical Prices" },
@@ -119,7 +119,9 @@ export default function Nav() {
 
   return (
     <nav className="w-56 shrink-0 border-r border-black/10 dark:border-white/10 p-4 flex flex-col gap-0.5 overflow-y-auto">
-      <div className="font-semibold text-sm px-2 pb-3 tracking-wide text-neutral-500">PRICING TOOL</div>
+      <Link href="/guide" className="font-semibold text-sm px-2 pb-3 tracking-wide text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 block">
+        PRICING TOOL
+      </Link>
       {groups.map((group, gi) => (
         <div key={group.label ?? `ungrouped-${gi}`} className={group.label ? "mt-1.5" : ""}>
           {group.label && (
