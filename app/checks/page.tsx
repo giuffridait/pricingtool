@@ -1,0 +1,69 @@
+import { businessUnits, shops, consistencyRules, discounts, rules, priceOverrides } from "@/lib/repo";
+import { loadCatalog, resolvePriceRole } from "@/lib/engine/catalog";
+import { runConsistencyChecks, runParityChecks } from "@/lib/engine/consistency";
+import { runSanityChecks } from "@/lib/engine/sanity";
+import { PageHeader, Card, Badge, EmptyState } from "@/components/ui";
+import ConsistencyRuleEditor, { type RefOption } from "@/components/ConsistencyRuleEditor";
+
+export default async function ChecksPage() {
+  const [bus, allShops, allConsistencyRules, allDiscounts, allRules, overrides, catalog] = await Promise.all([
+    businessUnits.all(),
+    shops.all(),
+    consistencyRules.all(),
+    discounts.all(),
+    rules.all(),
+    priceOverrides.all(),
+    loadCatalog(),
+  ]);
+  // Run every check across all business units, not just one - consistency/sanity
+  // rules can target catalog nodes in any BU.
+  const violations = bus.flatMap((bu) => [
+    ...runConsistencyChecks(catalog, overrides, allConsistencyRules, bu.id),
+    ...runParityChecks(catalog, overrides, allConsistencyRules, bu.id, allShops),
+  ]);
+  const violationMessages: Record<string, string[]> = {};
+  for (const v of violations) {
+    (violationMessages[v.rule.id] ??= []).push(v.message);
+  }
+
+  // Some detectors aren't BU-specific but still run once per BU above, so
+  // dedupe by finding id (which already encodes the specific anomaly).
+  const rawSanityFindings = bus.flatMap((bu) => runSanityChecks(catalog, overrides, allRules, allDiscounts, allShops, bu.id));
+  const sanityFindings = [...new Map(rawSanityFindings.map((f) => [f.id, f])).values()];
+
+  const refOptions: RefOption[] = [
+    ...catalog.productGroups.map((g) => ({
+      label: `Group: ${g.name}`,
+      id: g.id,
+      kvi: catalog.products.some((p) => p.productGroupId === g.id && resolvePriceRole(p) === "kvi"),
+    })),
+    ...catalog.products.map((p) => ({ label: `Product: ${p.name}`, id: p.id, kvi: resolvePriceRole(p) === "kvi" })),
+  ];
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Consistency & sanity checks"
+        description="Consistency rules validate intended price relationships (gaps, ordering, parity) at save/activation time - they never select a runtime price. Cross-SKU sanity checks are built-in detectors that scan the whole catalog for anomalies; detection only, never blocking."
+        path="/checks"
+      />
+
+      <ConsistencyRuleEditor rules={allConsistencyRules} refOptions={refOptions} violationMessages={violationMessages} />
+
+      <Card title="Cross-SKU sanity findings">
+        {sanityFindings.length === 0 ? (
+          <EmptyState>No anomalies detected.</EmptyState>
+        ) : (
+          <ul className="space-y-1.5 text-sm">
+            {sanityFindings.map((f) => (
+              <li key={f.id} className="flex items-start gap-2">
+                <Badge tone={f.severity}>{f.severity}</Badge>
+                <span>{f.message}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+}
